@@ -1,0 +1,239 @@
+#include "netipserverfamiliesdib.h"
+
+#include <algorithm>
+
+QT_BEGIN_NAMESPACE
+
+/*!
+    \inmodule QtKnx
+    \class QKnxServiceInfo
+
+    \ingroup qtknx-netip
+
+    \brief The QKnxServiceInfo class contains the supported service and the
+    corresponding service family version.
+
+    The service family is the high octet of the service type ID and the service
+    family version is an integer representing the service family version. It
+    refers to the version of the corresponding KNXnet/IP document, not to the
+    manufacturer's implemented version.
+
+    \sa QKnxNetIpServiceFamiliesDibProxy, {Qt KNXnet/IP Connection Classes}
+*/
+
+/*!
+    \variable QKnxServiceInfo::ServiceFamily
+
+    The service family is the high octet of the service type ID.
+
+    \sa QKnx::NetIp::ServiceType, QKnx::NetIp::ServiceFamily
+*/
+
+/*!
+    \variable QKnxServiceInfo::ServiceFamilyVersion
+
+    The service family version is an integer representing the service family
+    version. It refers to the version of the corresponding KNXnet/IP document,
+    not to the manufacturer's implemented version.
+*/
+
+/*!
+    \since 5.13
+
+    Returns \c true if this object and the given \a other are equal; otherwise
+    returns \c false.
+*/
+bool QKnxServiceInfo::operator==(const QKnxServiceInfo &other) const
+{
+    return ServiceFamily == other.ServiceFamily && ServiceFamilyVersion == other.ServiceFamilyVersion;
+}
+
+/*!
+    \since 5.13
+
+    Returns \c true if this object and the given \a other are not equal;
+    otherwise returns \c false.
+*/
+bool QKnxServiceInfo::operator!=(const QKnxServiceInfo &other) const
+{
+    return !operator==(other);
+}
+
+
+/*!
+    \class QKnxNetIpServiceFamiliesDibProxy
+
+    \inmodule QtKnx
+    \ingroup qtknx-netip
+
+    \brief The QKnxNetIpServiceFamiliesDibProxy class provides the means to read
+    the supported service families and versions from the generic \l QKnxNetIpDib
+    class and to create a KNXnet/IP device information block (DIB) structure
+    based on the information.
+
+    A KNXnet/IP supported service families DIB structure contains a set of
+    supported services and their corresponding versions. The service family is
+    the high octet of the service type ID and the service family version is an
+    integer representing the service family version. It refers to the version
+    of the corresponding KNXnet/IP document, not to the manufacturer's
+    implemented version.
+
+    \note When using QKnxNetIpServiceFamiliesDibProxy, care must be taken to
+    ensure that the referenced KNXnet/IP DIB structure outlives the proxy on
+    all code paths, lest the proxy ends up referencing deleted data.
+
+    Reading the supported service families can be achieved like this:
+    \code
+        auto dib = QKnxNetIpDib::fromBytes(...);
+
+        QKnxNetIpServiceFamiliesDibProxy proxy(dib);
+        if (!proxy.isValid())
+            return;
+
+        auto infos = proxy.serviceInfos();
+    \endcode
+
+    \sa builder(), {Qt KNXnet/IP Connection Classes}
+*/
+
+/*!
+    \internal
+    \fn QKnxNetIpServiceFamiliesDibProxy::QKnxNetIpServiceFamiliesDibProxy()
+*/
+
+/*!
+    \internal
+    \fn QKnxNetIpServiceFamiliesDibProxy::~QKnxNetIpServiceFamiliesDibProxy()
+*/
+
+/*!
+    \internal
+    \fn QKnxNetIpServiceFamiliesDibProxy::QKnxNetIpServiceFamiliesDibProxy(const QKnxNetIpDib &&)
+*/
+
+/*!
+    Constructs a proxy object with the specified KNXnet/IP DIB structure
+    \a dib to read the supported service families and versions.
+*/
+QKnxNetIpServiceFamiliesDibProxy::QKnxNetIpServiceFamiliesDibProxy(const QKnxNetIpDib &dib)
+    : m_dib(dib)
+{}
+
+/*!
+    Returns \c true if the KNXnet/IP structure to create the object is a valid
+    KNXnet/IP DIB structure; otherwise returns \c false.
+*/
+bool QKnxNetIpServiceFamiliesDibProxy::isValid() const
+{
+    return m_dib.isValid() && (m_dib.size() % 2 == 0) // must be even sized
+           && m_dib.code() == QKnxNetIp::DescriptionType::SupportedServiceFamilies;
+}
+
+/*!
+    Returns the description type of this KNXnet/IP structure if the object
+    that was passed during construction was valid; otherwise returns
+    \l QKnx::NetIp::Unknown.
+*/
+QKnxNetIp::DescriptionType QKnxNetIpServiceFamiliesDibProxy::descriptionType() const
+{
+    if (isValid())
+        return m_dib.code();
+    return QKnxNetIp::DescriptionType::Unknown;
+}
+
+/*!
+    Returns a vector of the QKnxServiceInfo carried by this KNXnet/IP DIB
+    structure if the object that was passed during construction was valid;
+    otherwise returns an empty vector.
+*/
+QVector<QKnxServiceInfo> QKnxNetIpServiceFamiliesDibProxy::serviceInfos() const
+{
+    QVector<QKnxServiceInfo> infos;
+    if (!isValid())
+        return infos;
+
+    const auto &data = m_dib.constData();
+    for (quint16 i = 0 ; i < m_dib.dataSize() ; i += 2)
+        infos.append({ QKnxNetIp::ServiceFamily(data.value(i)), data.value(i + 1) });
+    return infos;
+}
+
+/*!
+    Returns a builder object to create a KNXnet/IP service families DIB
+    structure.
+*/
+QKnxNetIpServiceFamiliesDibProxy::Builder QKnxNetIpServiceFamiliesDibProxy::builder()
+{
+    return QKnxNetIpServiceFamiliesDibProxy::Builder();
+}
+
+
+/*!
+    \class QKnxNetIpServiceFamiliesDibProxy::Builder
+
+    \inmodule QtKnx
+    \inheaderfile QKnxNetIpServiceFamiliesDibProxy
+
+    \brief The QKnxNetIpServiceFamiliesDibProxy::Builder class creates a
+    KNXnet/IP supported service families DIB structure.
+
+    A KNXnet/IP supported service families DIB structure contains a set of
+    supported services and their corresponding versions.
+
+    The common way to create such a DIB structure is:
+    \code
+        auto dib = QKnxNetIpServiceFamiliesDibProxy::builder()
+            .setServiceInfos({
+                { QKnxNetIp::ServiceFamily::Core, 0x01 },
+                { QKnxNetIp::ServiceFamily::DeviceManagement, 0x01 },
+                { QKnxNetIp::ServiceFamily::IpTunneling, 0x01 }
+            })
+            .create();
+    \endcode
+*/
+
+/*!
+    Sets the supported service families and versions of the KNXnet/IP DIB
+    structure to \a infos and returns a reference to the builder.
+*/
+QKnxNetIpServiceFamiliesDibProxy::Builder &
+QKnxNetIpServiceFamiliesDibProxy::Builder::setServiceInfos(const QVector<QKnxServiceInfo> &infos)
+{
+    m_infos = infos;
+
+    std::sort(m_infos.begin(), m_infos.end(),
+              [](const QKnxServiceInfo &a, const QKnxServiceInfo &b) {
+                  if (a.ServiceFamily < b.ServiceFamily)
+                      return true;
+                  if (a.ServiceFamily == b.ServiceFamily) {
+                      if (a.ServiceFamilyVersion < b.ServiceFamilyVersion)
+                          return true;
+                  }
+                  return false;
+              });
+    m_infos.erase(std::unique(m_infos.begin(), m_infos.end(),
+                              [](const QKnxServiceInfo &a, const QKnxServiceInfo &b) {
+                                  return a.ServiceFamily == b.ServiceFamily
+                                         && a.ServiceFamilyVersion == b.ServiceFamilyVersion;
+                              }), m_infos.end());
+
+    return *this;
+}
+
+/*!
+    Creates and returns a QKnxNetIpDib.
+
+    \note The returned structure may be invalid depending on the values used
+    during setup.
+
+    \sa isValid()
+*/
+QKnxNetIpDib QKnxNetIpServiceFamiliesDibProxy::Builder::create() const
+{
+    QKnxByteArray bytes;
+    for (const auto &info : qAsConst(m_infos))
+        bytes += { quint8(info.ServiceFamily), info.ServiceFamilyVersion };
+    return { QKnxNetIp::DescriptionType::SupportedServiceFamilies, bytes };
+}
+
+QT_END_NAMESPACE

@@ -1,0 +1,4 @@
+#ifndef QNEWSECUREKEY_H
+#define QNEWSECUREKEY_H
+
+#endif // QNEWSECUREKEY_H

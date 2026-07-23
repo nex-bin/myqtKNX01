@@ -1,0 +1,191 @@
+#include "netipstructheader.h"
+
+QT_BEGIN_NAMESPACE
+
+/*!
+    \class QKnxNetIpStructHeader
+
+    \inmodule QtKnx
+    \ingroup qtknx-netip
+
+    \brief The QKnxNetIpStructHeader class is a KNXnet/IP structure header.
+
+    The first octet of the structure is the length of the structure and the
+    second octet is an identifier that specifies the type of the structure.
+
+    If the structure's amount of data exceeds 252 octets, the first octet is
+    \c 0xff and the next two octets contain the length as a 16 bit value. The
+    fourth octet is then the identifier specifying the type of the structure.
+
+    \sa {Qt KNXnet/IP Connection Classes}
+*/
+
+/*!
+    \fn template <typename CodeType> QKnxNetIpStructHeader<CodeType>::QKnxNetIpStructHeader()
+
+    Constructs an empty invalid header object.
+
+    \sa isNull(), isValid()
+*/
+
+/*!
+    \fn template <typename CodeType> QKnxNetIpStructHeader<CodeType>::~QKnxNetIpStructHeader()
+
+    Destroys the header object and releases all allocated resources.
+*/
+
+/*!
+    \fn template <typename CodeType> QKnxNetIpStructHeader<CodeType>::QKnxNetIpStructHeader(CodeType codeType)
+
+    Constructs a valid header object and sets the KNXnet/IP structure identifier
+    to \a codeType.
+
+    \sa isValid(), code(), setCode()
+*/
+
+/*!
+    \fn template <typename CodeType> QKnxNetIpStructHeader<CodeType>::QKnxNetIpStructHeader(CodeType codeType, quint16 dataFieldSize)
+
+    Constructs a valid header object and sets the KNXnet/IP structure identifier
+    to \a codeType and the data size to \a dataFieldSize and updates the header size and
+    total size accordingly.
+
+    \sa isValid(), code(), setCode(), dataSize(), setDataSize()
+*/
+
+/*!
+    \fn template <typename CodeType> QKnxNetIpStructHeader<CodeType>::QKnxNetIpStructHeader(CodeType code, quint16 dataSize, bool mandatory)
+
+    Constructs a valid header object and sets the KNXnet/IP structure
+    identifier to \a code, the data size to \a dataSize, and the mandatory
+    flag to \a mandatory.
+    Additionally it updates the header and total size of the structure.
+
+    \sa isValid(), code(), setCode(), dataSize(), setDataSize(), setMandatory()
+*/
+
+/*!
+    \fn template <typename CodeType> bool QKnxNetIpStructHeader<CodeType>::isNull() const
+
+    Returns \c true if this is a default constructed header, otherwise returns
+    \c false. A header is considered null if it contains no initialized values.
+
+    \sa isValid()
+*/
+
+/*!
+    \fn template <typename CodeType> bool QKnxNetIpStructHeader<CodeType>::isValid() const
+
+    Returns \c true if the KNXnet/IP structure header contains initialized
+    values and is in itself valid, otherwise returns \c false. A valid KNXnet/IP
+    structure header consist of a given total size and a known \l code
+    identifier.
+
+    \sa isNull()
+*/
+
+/*!
+    \fn template <typename CodeType> quint8 QKnxNetIpStructHeader<CodeType>::size() const
+
+    Returns the size of the KNXnet/IP structure header.
+
+    \sa isNull(), isValid()
+*/
+
+/*!
+    \fn template <typename CodeType> quint16 QKnxNetIpStructHeader<CodeType>::totalSize() const
+
+    Returns the total size of the KNXnet/IP structure if the header is valid,
+    otherwise returns \c null. The total size includes the size of the header
+    and the size of the KNXnet/IP structure data.
+
+    \sa isNull(), isValid(), size(), dataSize()
+*/
+
+/*!
+    \fn template <typename CodeType> quint16 QKnxNetIpStructHeader<CodeType>::dataSize() const
+
+    Returns the size of the KNXnet/IP structure data if the header is valid,
+    otherwise returns \c null.
+
+    The data size excludes the size of the KNXnet/IP structure header.
+
+    \sa isNull(), isValid(), size(), totalSize()
+*/
+
+/*!
+    \fn template <typename CodeType> void QKnxNetIpStructHeader<CodeType>::setDataSize(quint16 dataFieldSize)
+
+    Sets the KNXnet/IP structure data size to \a dataFieldSize and updates the
+    header and total size accordingly.
+*/
+
+/*!
+    \fn template <typename CodeType> CodeType QKnxNetIpStructHeader<CodeType>::code() const
+
+    Returns the KNXnet/IP structure's \l code identifier.
+*/
+
+/*!
+    \fn template <typename CodeType> void QKnxNetIpStructHeader<CodeType>::setCode(CodeType codeType)
+
+    Sets the KNXnet/IP structure's code identifier to \a codeType.
+*/
+
+/*!
+    \fn template <typename CodeType> quint8 QKnxNetIpStructHeader<CodeType>::byte(quint8 index) const
+
+    Returns the byte at position \a index in the header.
+*/
+
+/*!
+    \fn template <typename CodeType> QKnxNetIpStructHeader<CodeType>::bytes() const
+
+    Returns an array of bytes that represent the KNXnet/IP structure header.
+*/
+
+/*!
+    \fn template <typename CodeType> static QKnxNetIpStructHeader<CodeType>::fromBytes(const QKnxByteArray &bytes, quint16 index = 0)
+
+    Constructs the KNXnet/IP structure header from the byte array \a bytes
+    starting at the position \a index inside the array.
+
+    \sa isNull(), isValid()
+*/
+
+/*!
+    \fn template <typename CodeType> bool QKnxNetIpStructHeader<CodeType>::operator==(const QKnxNetIpStructHeader &other) const
+
+    Returns \c true if this object and the given \a other are equal; otherwise
+    returns \c false.
+*/
+
+/*!
+    \fn template <typename CodeType> bool QKnxNetIpStructHeader<CodeType>::operator!=(const QKnxNetIpStructHeader &other) const
+
+    Returns \c true if this object and the given \a other are not equal;
+    otherwise returns \c false.
+*/
+
+/*!
+    \since 5.12
+    \fn template <typename CodeType> bool QKnxNetIpStructHeader<CodeType>::isMandatory() const
+
+    Returns \c true if the mandatory bit is set; otherwise returns \c false.
+*/
+
+/*!
+    \since 5.12
+    \fn template <typename CodeType> void QKnxNetIpStructHeader<CodeType>::setMandatory(bool value)
+
+    Sets the KNXnet/IP structure's mandatory bit to \a value.
+*/
+
+/*!
+    \relates QKnxNetIpStructHeader
+    \fn template<typename CodeType> QDebug operator<<(QDebug debug, const QKnxNetIpStructHeader<CodeType> &header)
+
+    Writes the KNXnet/IP structure header \a header to the \a debug stream.
+*/
+
+QT_END_NAMESPACE
