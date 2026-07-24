@@ -8,6 +8,7 @@
 
 #include <netipconnectionheader.h>
 #include <netipframe.h>
+#include <netipservicediscoveryagent_p.h>
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
@@ -23,6 +24,7 @@ MainWindow::~MainWindow()
 }
 
 void MainWindow::init(){
+    // m_discoverer();
     ui->comboBox->addItem("TCP client");
     ui->comboBox->addItem("TCP server");
     ui->comboBox->addItem("UDP server");
@@ -87,23 +89,14 @@ void MainWindow::onReadyRead(){
         qDebug() << "frame type is : "<<typeid(frame).name();
         qDebug() << "frame is : "<<frame;
 
-            //     const auto proxy = QKnxNetIpSearchResponseProxy(frame);
-            //     if (!proxy.isValid())
-            //         continue;
+        // using overload = void (QUdpSocket::*)(QUdpSocket::SocketError);
+        // connect(m_udpSocket, static_cast<overload>(&QUdpSocket::error), this, &Discoverer::onError);
+        // connect(m_udpSocket, &QUdpSocket::errorOccurred, this, &Discoverer::errorOccurred);
 
-            // if (m_config.DiscoveryCoreV1 && !proxy.isExtended()) {
-            //     emit deviceDiscovered(
-            //         {
-            //             (m_config.Nat ? QKnxNetIpHpaiProxy::builder()
-            //                                 .setHostAddress(datagram.senderAddress())
-            //                                 .setPort(datagram.senderPort()).create()
-            //                           : proxy.controlEndpoint()),
-            //                 proxy.deviceHardware(),
-            //                 proxy.supportedFamilies(),
-            //                 m_address, m_iface
-            //         }
-            //         );
-            // }
+        // bool bound = m_udpSocket->bind(m_config.Multicast ? QHostAddress::AnyIPv4
+        //                                                : m_address,
+        //                             m_config.Multicast ? 3671 : 0,
+        //                             QUdpSocket::ShareAddress | QUdpSocket::ReuseAddressHint);
 
     }
 

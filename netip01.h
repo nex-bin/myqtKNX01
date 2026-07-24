@@ -13,7 +13,34 @@ public:
 
 namespace QKnx
 {
+struct abc
+{
 
+};
+//自定义结构体。enum class MediumStatus : quint8
+enum class InterfaceFeature : quint8
+{
+    Unknown = 0x00,
+    TP0 = 0x01,
+    TP = 0x02,
+    PL132 = 0x03,
+    PL = 0x04,
+    RF = 0x10,
+    NetIP = 0x20
+
+};
+
+    enum class ReturnCode : quint8
+{
+    Success = 0x00,
+    TPWrong = 0x01,
+    TP = 0x02,
+    PL132 = 0x03,
+    PL = 0x04,
+    RF = 0x10,
+    NetIP = 0x20
+
+};
 
     namespace NetIp
     {

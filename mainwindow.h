@@ -4,6 +4,8 @@
 #include <QMainWindow>
 #include <QUdpSocket>
 
+#include <netipservicediscoveryagent_p.h>
+
 QT_BEGIN_NAMESPACE
 namespace Ui {
 class MainWindow;
@@ -23,6 +25,7 @@ public:
     void KNXIPconnect();
     void onReadyRead();
 
+    // Discoverer m_discoverer;
     // DiscovererConfig m_config;
 
 private:

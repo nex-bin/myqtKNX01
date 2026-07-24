@@ -30,7 +30,6 @@ SOURCES += \
     netipstructheader.cpp \
     netiptunnelinginfodib.cpp \
     qnewaddress.cpp \
-    qnewbuildings_p.cpp \
     qnewbytearray.cpp \
     qnewprojectutils_p.cpp
 
@@ -56,10 +55,9 @@ HEADERS += \
     netipstruct.h \
     netipstructheader.h \
     netiptunnelinginfodib.h \
-    qknxbuilderdata_p.h \
-    qknxbuildings_p.h \
     qmyknx.h \
     qnewaddress.h \
+    qnewbuilderdata_p.h \
     qnewbuildings_p.h \
     qnewbytearray.h \
     qnewcryptographicengine.h \

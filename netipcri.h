@@ -1,10 +1,48 @@
 #ifndef NETIPCRI_H
 #define NETIPCRI_H
 
-class netipcri
+#include <qnewaddress.h>
+#include <netipstruct.h>
+
+QT_BEGIN_NAMESPACE
+
+class Q_KNX_EXPORT QKnxNetIpCriProxy final
 {
 public:
-    netipcri();
+    QKnxNetIpCriProxy() = delete;
+    ~QKnxNetIpCriProxy() = default;
+
+    QKnxNetIpCriProxy(const QKnxNetIpCri &&) = delete;
+    explicit QKnxNetIpCriProxy(const QKnxNetIpCri &cri);
+
+    bool isValid() const;
+    bool isExtended() const;
+
+    QKnxNetIp::ConnectionType connectionType() const;
+    QKnxNetIp::TunnelLayer tunnelLayer() const;
+    QKnxAddress individualAddress() const;
+    QKnxByteArray additionalData() const;
+
+    class Q_KNX_EXPORT Builder final
+    {
+    public:
+        Builder &setConnectionType(QKnxNetIp::ConnectionType type);
+        Builder &setTunnelLayer(QKnxNetIp::TunnelLayer layer);
+        Builder &setIndividualAddress(const QKnxAddress &address);
+        Builder &setAdditionalData(const QKnxByteArray &additionalData);
+
+        QKnxNetIpCri create() const;
+
+    private:
+        QKnxNetIp::ConnectionType m_cType = QKnxNetIp::ConnectionType::Tunnel;
+        QKnxByteArray m_additionalData;
+    };
+    static QKnxNetIpCriProxy::Builder builder();
+
+private:
+    const QKnxNetIpCri &m_cri;
 };
 
-#endif // NETIPCRI_H
+QT_END_NAMESPACE
+
+#endif
