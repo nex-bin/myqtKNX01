@@ -28,6 +28,9 @@ static void clearTimer(QTimer **timer)
 
 static QVector<Adapter> adaptersForAddresses(const QVector<QHostAddress> addresses)
 {
+/*
+     用来记录 本地所有可用 的IP地址和QNetworkInterface
+*/
     QVector<Adapter> adapters;
     auto all = QNetworkInterface::allInterfaces();
     for (const auto &iface : all) {
@@ -70,9 +73,10 @@ Discoverer::~Discoverer()
 
 void Discoverer::start()
 {
+    qDebug()<<"####Feature Info :this is Discoverer::start!!!!!";
+
     if (m_state != QKnxNetIpServerDiscoveryAgent::State::NotRunning)
         return;
-
     setAndEmitStateChanged(QKnxNetIpServerDiscoveryAgent::State::Starting);
 
     auto isIPv4 = true;
@@ -80,19 +84,20 @@ void Discoverer::start()
     if (!isIPv4) {
         emit errorOccurred(QKnxNetIpServerDiscoveryAgent::Error::NotIPv4,
                            QKnxNetIpServerDiscoveryAgent::tr("Only IPv4 local address supported."));
+        qDebug()<<"emit errorOccurred";
         return finish();
     }
 
     m_socket = new QUdpSocket;
+
     connect(m_socket, &QUdpSocket::readyRead, this, &Discoverer::onReadyRead);
-    using overload = void (QUdpSocket::*)(QUdpSocket::SocketError);
-    // connect(m_socket, static_cast<overload>(&QUdpSocket::error), this, &Discoverer::onError);
     connect(m_socket, &QUdpSocket::errorOccurred, this, &Discoverer::onError);
 
     bool bound = m_socket->bind(m_config.Multicast ? QHostAddress::AnyIPv4
                                                    : m_address,
                                 m_config.Multicast ? 3671 : 0,
                                 QUdpSocket::ShareAddress | QUdpSocket::ReuseAddressHint);
+
     if (!bound)
         return finish();
 
@@ -103,6 +108,7 @@ void Discoverer::start()
         if (!m_socket->joinMulticastGroup(m_multicast, m_iface)) {
             emit errorOccurred(QKnxNetIpServerDiscoveryAgent::Error::Network,
                                QKnxNetIpServerDiscoveryAgent::tr("Could not join multicast group."));
+            qDebug()<<"emit errorOccurred";
             return finish();
         }
         m_socket->setSocketOption(QUdpSocket::SocketOption::MulticastTtlOption, m_config.Ttl);
@@ -115,14 +121,16 @@ void Discoverer::start()
     if (m_config.DiscoveryCoreV1) {
         const auto frame = QKnxNetIpSearchRequestProxy::builder()
         .setDiscoveryEndpoint(QKnxNetIpHpaiProxy::Builder()
-                                  .setPort(m_config.Nat ? 0 : (m_config.Multicast ? 3671 : m_socket->localPort()))
-                                  .setHostAddress(m_config.Nat ? QHostAddress::AnyIPv4
-                                                               : (m_config.Multicast ? m_multicast : m_address))
-                                  .create())
-            .create();
+        .setPort(m_config.Nat ? 0 : (m_config.Multicast ? 3671 : m_socket->localPort()))
+        .setHostAddress(m_config.Nat ? QHostAddress::AnyIPv4: (m_config.Multicast ? m_multicast : m_address))
+        .create())
+        .create();
 
-        if (frame.isValid())
+        if (frame.isValid()){
             m_socket->writeDatagram(frame.bytes().toByteArray(), m_multicast, 3671);
+            qDebug()<<"searchrequest send:"<<frame.bytes().toByteArray().toHex();
+
+        }
     }
 
     if (m_config.DiscoveryCoreV2) {
@@ -139,10 +147,14 @@ void Discoverer::start()
     }
 
     m_timer->start(m_config.Timeout);
+    qDebug()<<"####Feature Info :计时开始--------this is Discoverer::start end!!!!!";
+
 }
 
 void Discoverer::finish()
 {
+    qDebug()<<"####Feature Info :this is Discoverer::finish!!!!!";
+
     if (m_state == QKnxNetIpServerDiscoveryAgent::State::Stopping
         || m_state == QKnxNetIpServerDiscoveryAgent::State::NotRunning) {
         return;
@@ -153,6 +165,8 @@ void Discoverer::finish()
     QKnxPrivate::clearTimer(&m_timer);
 
     if (m_socket) {
+        //清空套接字
+        qDebug()<<"---------m_socket清空----------";
         if (m_config.Multicast && m_socket->state() == QUdpSocket::BoundState) {
             m_socket->setMulticastInterface({});
             m_socket->leaveMulticastGroup(m_multicast, m_iface);
@@ -166,33 +180,51 @@ void Discoverer::finish()
 void Discoverer::onTimeout()
 {
     if (m_devices.isEmpty())
+    {
+        qDebug()<<"-----------触发 ontimeout 信号——————————————。";
         emit timeout();
+    }
     finish();
 }
 
 void Discoverer::onReadyRead()
 {
+
     while (m_socket->hasPendingDatagrams()) {
+        qDebug()<<"__________ data stream is coming___________";
         if (m_state != QKnxNetIpServerDiscoveryAgent::State::Running)
             break;
-
         const auto datagram = m_socket->receiveDatagram();
         const auto data = QKnxByteArray::fromByteArray(datagram.data());
         const auto header = QKnxNetIpFrameHeader::fromBytes(data, 0);
         if (!header.isValid())
+        {
+            qDebug()<<"报文头不存在，退出";
             continue;
+        }
+
 
         if (header.serviceType() != QKnxNetIp::ServiceType::SearchResponse
             && header.serviceType() != QKnxNetIp::ServiceType::ExtendedSearchResponse) {
+            qDebug()<<"####header.servicetype is"<<header.serviceType()<<"不是searchResponse响应报文，退出";
+
             continue;
         }
 
         const auto frame = QKnxNetIpFrame::fromBytes(data);
         const auto proxy = QKnxNetIpSearchResponseProxy(frame);
+
+        qDebug()<<frame.header()<<frame.data()<<frame.serviceType();
+
         if (!proxy.isValid())
             continue;
 
         if (m_config.DiscoveryCoreV1 && !proxy.isExtended()) {
+            qDebug()<<"发现设备。";
+            qDebug()<<"报文的发送方："<<datagram.senderAddress();
+            qDebug()<<"searchresponse的控制端："<<proxy.controlEndpoint();
+            qDebug()<<"支持的家族服务："<<proxy.supportedFamilies()<<typeid(proxy.supportedFamilies()).name();
+            qDebug()<<"m_address: "<<m_address<<"/n网卡 信息："<<m_iface;
             emit deviceDiscovered(
                 {
                     (m_config.Nat ? QKnxNetIpHpaiProxy::builder()
@@ -204,6 +236,7 @@ void Discoverer::onReadyRead()
                         m_address, m_iface
                 }
                 );
+            qDebug()<<"————————触发发现设备——————————";
         }
 
         if (m_config.DiscoveryCoreV2 && proxy.isExtended()) {
@@ -265,12 +298,17 @@ QKnxNetIpServerDiscoveryAgentPrivate::QKnxNetIpServerDiscoveryAgentPrivate(const
 
 void QKnxNetIpServerDiscoveryAgentPrivate::setupSocket()
 {
+    qDebug()<<"####Feature Info :this is QKnxNetIpServerDiscoveryAgentPrivate::setupSocket!!!!!";
     usedPort = port;
     usedAddress = address;
     QKnxPrivate::clearSocket(&socket);
+    qDebug()<<"usedPort:"<<port<<"usedAddress:"<<address<<"   address type is :"<<typeid(address).name();
 
     Q_Q(QKnxNetIpServerDiscoveryAgent);
     socket = new QUdpSocket(q);
+    qDebug()<<"Socket is :"<<socket->isValid();
+    qDebug()<<"q is the typeof "<<typeid(q).name();
+    // qDebug()<<"q status is : "<<q->state();
 
     adapter = QKnxPrivate::adaptersForAddresses(QVector<QHostAddress> { address }).value(0);
     QObject::connect(socket, &QUdpSocket::stateChanged, q, [&](QUdpSocket::SocketState s) {
@@ -349,7 +387,7 @@ void QKnxNetIpServerDiscoveryAgentPrivate::setupSocket()
         }
     });
 
-    using overload = void (QUdpSocket::*)(QUdpSocket::SocketError);
+    // using overload = void (QUdpSocket::*)(QUdpSocket::SocketError);
     // QObject::connect(socket,static_cast<overload>(&QUdpSocket::error), q, [&](QUdpSocket::SocketError) {
     //                      setAndEmitErrorOccurred(QKnxNetIpServerDiscoveryAgent::Error::Network,
     //                                              socket->errorString());
@@ -368,6 +406,8 @@ void QKnxNetIpServerDiscoveryAgentPrivate::setupSocket()
     QObject::connect(socket, &QUdpSocket::readyRead, q, [&]() {
         Q_Q(QKnxNetIpServerDiscoveryAgent);
         while (socket->hasPendingDatagrams()) {
+            qDebug()<<"socket->hasPendingDatagrams().now Socket is :"<<socket->isValid();
+
             if (q->state() != QKnxNetIpServerDiscoveryAgent::State::Running)
                 break;
 
@@ -381,15 +421,40 @@ void QKnxNetIpServerDiscoveryAgentPrivate::setupSocket()
                 header.serviceType() != QKnxNetIp::ServiceType::ExtendedSearchResponse) {
                 continue;
             }
+            qDebug()<<"header is :"<<header<<"header type is :"<<typeid(header).name();
 
+            if (header.serviceType() == QKnxNetIp::ServiceType::SearchResponse )
+            {
+                qDebug()<<"header.serviceType() is QKnxNetIp::ServiceType::SearchResponse :";
+            }else if(                header.serviceType() == QKnxNetIp::ServiceType::ExtendedSearchResponse)
+            {
+                qDebug()<<"header.serviceType() is QKnxNetIp::ServiceType::ExtendedSearchResponse :";
+            }
+            qDebug()<<"header.serviceType() is :"<<header.serviceType()<<"header.serviceType() type is :"<<typeid(header.serviceType()).name();
             auto frame = QKnxNetIpFrame::fromBytes(data);
-            auto response = QKnxNetIpSearchResponseProxy(frame);
+
+            auto response = QKnxNetIpSearchResponseProxy(frame);//response.controlEndpoint()是返回的控制端的HPAI，IP和端口
             if (!response.isValid())
                 continue;
+            qDebug()<<"frame is :"<<frame;
+            qDebug()<<"frame type is :"<<typeid(frame).name();
+            qDebug()<<"frame.data() is :"<<frame.data();
+            qDebug()<<"datagram.senderAddress() is :"<<datagram.senderAddress();
+            qDebug()<<"datagram.senderPort() is :"<<datagram.senderPort();
+            qDebug()<<"response.controlEndpoint() is :"<<response.controlEndpoint()<<"response.controlEndpoint() type is :"<<typeid(response.controlEndpoint()).name();
+            qDebug()<<"response.controlEndpoint().code is :"<<response.controlEndpoint().code()<<"response.controlEndpoint().code type is :"<<typeid(response.controlEndpoint().code()).name();
+            qDebug()<<"response.isExtended() is : "<<response.isExtended();
+            qDebug()<<"adapter.address is : "<<typeid(adapter.address).name();
+            qDebug()<<"adapter.iface is : "<<adapter.iface;
+
+
+
 
             const QFlags<QKnxNetIpServerDiscoveryAgent::DiscoveryMode> flags(mode);
             if (flags.testFlag(QKnxNetIpServerDiscoveryAgent::DiscoveryMode::CoreV1)
                 && !response.isExtended()) {
+                qDebug()<<"_________________CoreV1_OK_________________";
+                qDebug()<<"____setAndEmitDeviceDiscovered___";
                 setAndEmitDeviceDiscovered({
                     (nat ? QKnxNetIpHpaiProxy::builder()
                                .setHostAddress(datagram.senderAddress())
@@ -501,7 +566,17 @@ void QKnxNetIpServerDiscoveryAgentPrivate::setAndEmitStateChanged(
 void QKnxNetIpServerDiscoveryAgentPrivate::setAndEmitDeviceDiscovered(
     const QKnxNetIpServerInfo &discoveryInfo)
 {
+    qDebug()<<"####Feature Info :this is QKnxNetIpServerDiscoveryAgentPrivate::setAndEmitDeviceDiscovered!!!!!";
+
     servers.append(discoveryInfo);
+
+    qDebug()<<"discoveryInfo type is :"<<typeid(discoveryInfo).name();
+    qDebug()<<"discoveryInfo.deviceName()"<<discoveryInfo.deviceName();
+    //遍历discoveryInfo
+    qDebug()<<"discoveryInfo.individualAddress()"<<discoveryInfo.individualAddress();
+   qDebug()<<"discoveryInfo.tunnelingInfo()"<<discoveryInfo.tunnelingInfo();
+    qDebug()<<"discoveryInfo.hardware()"<<discoveryInfo.hardware();
+   qDebug()<<"discoveryInfo.tunnelingSlotInfos()"<<typeid(discoveryInfo.tunnelingSlotInfos()).name();
 
     Q_Q(QKnxNetIpServerDiscoveryAgent);
     emit q->deviceDiscovered(discoveryInfo);
@@ -519,21 +594,28 @@ void QKnxNetIpServerDiscoveryAgentPrivate::setAndEmitErrorOccurred(
 
 void QKnxNetIpServerDiscoveryAgentPrivate::start()
 {
+    qDebug()<<"####Feature Info :this is QKnxNetIpServerDiscoveryAgentPrivate::start!!!!!";
+
     if (state != QKnxNetIpServerDiscoveryAgent::State::NotRunning)
         return;
-
+    qDebug()<<"state is : "<<state;
     if (address.isNull())
         address = QHostAddress(QHostAddress::AnyIPv4);
+    qDebug()<<"address is : "<<address;
 
     auto isIPv4 = true;
     address.toIPv4Address(&isIPv4);
     if (isIPv4) {
         setAndEmitStateChanged(QKnxNetIpServerDiscoveryAgent::State::Starting);
         setupSocket();
+        qDebug()<<type;
         if (type == QKnxNetIpServerDiscoveryAgent::ResponseType::Multicast) {
+            qDebug()<<"type == QKnxNetIpServerDiscoveryAgent::ResponseType::Multicast";
+
             socket->bind(QHostAddress::AnyIPv4, multicastPort, QUdpSocket::ShareAddress
                                                                    | QAbstractSocket::ReuseAddressHint);
         } else {
+            qDebug()<<"type != QKnxNetIpServerDiscoveryAgent::ResponseType::Multicast";
             socket->bind(address, port);
         }
     } else {

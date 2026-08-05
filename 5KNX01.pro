@@ -11,59 +11,133 @@ SOURCES += \
     mainwindow.cpp \
     netip01.cpp \
     netipconnectionheader.cpp \
+    netipconnectionstaterequest.cpp \
+    netipconnectionstateresponse.cpp \
     netipconnectrequest.cpp \
+    netipconnectresponse.cpp \
+    netipcrd.cpp \
     netipcri.cpp \
+    netipdeviceconfigurationacknowledge.cpp \
+    netipdeviceconfigurationrequest.cpp \
+    netipdisconnectrequest.cpp \
+    netipdisconnectresponse.cpp \
     netipdivicedib.cpp \
+    netipendpointconnection.cpp \
     netipextendeddevicedib.cpp \
     netipframe.cpp \
     netipframeheader.cpp \
     netiphpai.cpp \
     netipsearchrequest.cpp \
     netipsearchresponse.cpp \
+    netipsecureconfiguration.cpp \
+    netipsecurewrapper.cpp \
     netipserverfamiliesdib.cpp \
     netipservicediscoveryagent.cpp \
     netipservicediscoveryagent_p.cpp \
     netipserviceinfo.cpp \
     netipserviceinfo_p.cpp \
+    netipsessionauthenticate.cpp \
+    netipsessionrequest.cpp \
+    netipsessionresponse.cpp \
+    netipsessionstatus.cpp \
     netipsrp.cpp \
     netipstruct.cpp \
     netipstructheader.cpp \
+    netiptimernotify.cpp \
+    netiptunnelingacknowledge.cpp \
+    netiptunnelingfeatureget.cpp \
+    netiptunnelingfeatureinfo.cpp \
+    netiptunnelingfeatureresponse.cpp \
+    netiptunnelingfeatureset.cpp \
     netiptunnelinginfodib.cpp \
+    netiptunnelingrequest.cpp \
     qnewaddress.cpp \
+    qnewaddtionalinfo.cpp \
     qnewbytearray.cpp \
-    qnewprojectutils_p.cpp
+    qnewcontrolfield.cpp \
+    qnewcryptographicengine.cpp \
+    qnewdevicemanagementframe.cpp \
+    qnewdevicemanagementframefactory.cpp \
+    qnewextendedcontrolfield.cpp \
+    qnewinterfaceobjectproperty.cpp \
+    qnewinterfaceobjecttype.cpp \
+    qnewkeyring.cpp \
+    qnewlinklayerframe.cpp \
+    qnewlinklayerframebuilder.cpp \
+    qnewprojectutils_p.cpp \
+    qnewsecurekey.cpp \
+    qnewssl_openssl.cpp \
+    qnewtpdu.cpp
 
 HEADERS += \
     mainwindow.h \
+    myqglobal_p.h \
+    myqtnetworkglobal_p.h \
     netip01.h \
     netipconnectionheader.h \
+    netipconnectionstaterequest.h \
+    netipconnectionstateresponse.h \
     netipconnectrequest.h \
+    netipconnectresponse.h \
+    netipcrd.h \
     netipcri.h \
+    netipdeviceconfigurationacknowledge.h \
+    netipdeviceconfigurationrequest.h \
+    netipdisconnectrequest.h \
+    netipdisconnectresponse.h \
     netipdivicedib.h \
+    netipendpointconnection.h \
+    netipendpointconnection_p.h \
     netipextendeddevicedib.h \
     netipframe.h \
     netipframeheader.h \
     netiphpai.h \
     netipsearchrequest.h \
     netipsearchresponse.h \
+    netipsecureconfiguration.h \
+    netipsecureconfiguration_p.h \
+    netipsecurewrapper.h \
     netipserverfamiliesdib.h \
     netipservicediscoveryagent.h \
     netipservicediscoveryagent_p.h \
     netipserviceinfo.h \
     netipserviceinfo_p.h \
+    netipsessionauthenticate.h \
+    netipsessionrequest.h \
+    netipsessionresponse.h \
+    netipsessionstatus.h \
     netipsrp.h \
     netipstruct.h \
     netipstructheader.h \
+    netiptimernotify.h \
+    netiptunnelingacknowledge.h \
+    netiptunnelingfeatureget.h \
+    netiptunnelingfeatureinfo.h \
+    netiptunnelingfeatureresponse.h \
+    netiptunnelingfeatureset.h \
     netiptunnelinginfodib.h \
+    netiptunnelingrequest.h \
     qmyknx.h \
     qnewaddress.h \
+    qnewaddtionalinfo.h \
     qnewbuilderdata_p.h \
     qnewbuildings_p.h \
     qnewbytearray.h \
+    qnewcontrolfield.h \
     qnewcryptographicengine.h \
+    qnewdevicemanagementframe.h \
+    qnewdevicemanagementframefactory.h \
+    qnewextendedcontrolfield.h \
+    qnewinterfaceobjectproperty.h \
+    qnewinterfaceobjecttype.h \
+    qnewkeyring_p.h \
+    qnewlinklayerframe.h \
+    qnewlinklayerframebuilder.h \
     qnewobject_p.h \
     qnewprojectutils_p.h \
     qnewsecurekey.h \
+    qnewssl_p.h \
+    qnewtpdu.h \
     qnewtraits.h \
     qnewutils.h
 

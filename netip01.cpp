@@ -92,6 +92,22 @@ bool QKnxNetIp::isStructType(QKnxNetIp::ConnectionType type)
     return false;
 }
 
+
+
+bool QKnx::isInterfaceFeature(QKnx::InterfaceFeature type){
+    switch (type) {
+    case QKnx::InterfaceFeature::NetIP:
+    case QKnx::InterfaceFeature::PL:
+    case QKnx::InterfaceFeature::PL132:
+    case QKnx::InterfaceFeature::RF:
+    case QKnx::InterfaceFeature::TP0:
+    case QKnx::InterfaceFeature::TP:
+    return true;
+    case QKnx::InterfaceFeature::Unknown:
+        break;
+    }
+    return false;
+}
 /*!
     \enum QKnx::NetIp::DescriptionType
 

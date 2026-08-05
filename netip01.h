@@ -1,20 +1,36 @@
-#ifndef QMYKNXNETIP_H
-#define QMYKNXNETIP_H
+#ifndef NETIP01_H
+#define NETIP01_H
 
 #include <qmetaobject.h>
-
+#include <qtmetamacros.h>
 QT_BEGIN_NAMESPACE
 
 class qmyknxnetip
 {
-public:
-    qmyknxnetip();
+    // Q_OBJECT
+
+    Q_GADGET
+
+// public:
+//     qmyknxnetip();
 };
 
 namespace QKnx
 {
 struct abc
 {
+
+};
+
+enum class MediumType : quint8
+{
+    Unknown = 0x00,
+    TP0 = 0x01,
+    TP = 0x02,
+    PL132 = 0x03,
+    PL = 0x04,
+    RF = 0x10,
+    NetIP = 0x20
 
 };
 //自定义结构体。enum class MediumStatus : quint8
@@ -29,6 +45,7 @@ enum class InterfaceFeature : quint8
     NetIP = 0x20
 
 };
+bool isInterfaceFeature(InterfaceFeature type);
 
     enum class ReturnCode : quint8
 {
@@ -44,6 +61,7 @@ enum class InterfaceFeature : quint8
 
     namespace NetIp
     {
+    Q_NAMESPACE
         struct Constants
         {
             static constexpr const quint16 DefaultPort = 3671;
@@ -179,7 +197,6 @@ enum class InterfaceFeature : quint8
             NoTunnelingAddress = 0x2d,
             ConnectionInUse = 0x2e
         };
-
         enum class DeviceState : quint8
         {
             KnxFault = 0x00,
@@ -251,6 +268,7 @@ enum class InterfaceFeature : quint8
             SecureSessionRequestTimeout = 10000,
             SecureSessionAuthenticateTimeout = 10000
         };
+        Q_ENUM_NS(Error)
 
 
         namespace CemiServer
