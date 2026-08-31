@@ -1,7 +1,7 @@
 #ifndef NETIPSEARCHRESPONSE_H
 #define NETIPSEARCHRESPONSE_H
 
-#include <netipdivicedib.h>
+#include <netipdevicedib.h>
 #include <netipframe.h>
 #include <netiphpai.h>
 #include <netipserverfamiliesdib.h>

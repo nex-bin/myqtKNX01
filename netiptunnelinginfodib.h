@@ -1,5 +1,5 @@
-#ifndef QKNXNETIPTUNNELINGINFODIB_H
-#define QKNXNETIPTUNNELINGINFODIB_H
+#ifndef NETIPTUNNELINGINFODIB_H
+#define NETIPTUNNELINGINFODIB_H
 
 #include <QtCore/qshareddata.h>
 #include <qnewaddress.h>

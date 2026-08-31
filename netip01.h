@@ -61,7 +61,7 @@ bool isInterfaceFeature(InterfaceFeature type);
 
     namespace NetIp
     {
-    Q_NAMESPACE
+        Q_NAMESPACE
         struct Constants
         {
             static constexpr const quint16 DefaultPort = 3671;
@@ -219,6 +219,7 @@ bool isInterfaceFeature(InterfaceFeature type);
             Unknown = 0xff
         };
         bool isProgrammingMode(ProgrammingMode mode);
+        Q_ENUM_NS(ProgrammingMode);
 
         enum class AssignmentMethod : quint8
         {

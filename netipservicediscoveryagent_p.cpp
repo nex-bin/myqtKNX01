@@ -125,10 +125,13 @@ void Discoverer::start()
         .setHostAddress(m_config.Nat ? QHostAddress::AnyIPv4: (m_config.Multicast ? m_multicast : m_address))
         .create())
         .create();
+        qDebug()<<m_config.Nat<<m_config.Multicast<<m_multicast;
 
         if (frame.isValid()){
             m_socket->writeDatagram(frame.bytes().toByteArray(), m_multicast, 3671);
             qDebug()<<"searchrequest send:"<<frame.bytes().toByteArray().toHex();
+            // qDebug()<<"localaddress: "<<m_socket->localAddress()<<"localport: "<<m_socket->localPort();
+            // localaddress:  QHostAddress("0.0.0.0") localport:  3671
 
         }
     }
@@ -203,7 +206,7 @@ void Discoverer::onReadyRead()
             continue;
         }
 
-
+        //仅仅对搜索响应处理。其他的响应是不做处理的。
         if (header.serviceType() != QKnxNetIp::ServiceType::SearchResponse
             && header.serviceType() != QKnxNetIp::ServiceType::ExtendedSearchResponse) {
             qDebug()<<"####header.servicetype is"<<header.serviceType()<<"不是searchResponse响应报文，退出";

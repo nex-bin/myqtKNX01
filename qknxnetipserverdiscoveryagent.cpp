@@ -27,9 +27,9 @@
 **
 ******************************************************************************/
 
-#include "qknxnetiphpai.h"
-#include "qknxnetipserverdiscoveryagent.h"
-#include "qknxnetipserverdiscoveryagent_p.h"
+#include "netiphpai.h"
+#include <netipservicediscoveryagent.h>
+#include <netipservicediscoveryagent_p.h>
 
 #include <QtNetwork/qnetworkinterface.h>
 

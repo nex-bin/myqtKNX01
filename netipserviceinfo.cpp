@@ -1,4 +1,4 @@
-#include "netipdivicedib.h"
+#include "netipdevicedib.h"
 #include "netipextendeddevicedib.h"
 #include "netipserviceinfo.h"
 #include "netipserviceinfo_p.h"

@@ -27,8 +27,8 @@
 **
 ******************************************************************************/
 
-#ifndef QNEWNETIPTUNNELINGREQUEST_H
-#define QNEWNETIPTUNNELINGREQUEST_H
+#ifndef NETIPTUNNELINGREQUEST_H
+#define NETIPTUNNELINGREQUEST_H
 
 #include <netip01.h>
 #include <netipframe.h>

@@ -1,6 +1,6 @@
 /******************************************************************************
 **
-** Copyright (C) 2017 The Qt Company Ltd.
+** Copyright (C) 2018 The Qt Company Ltd.
 ** Contact: https://www.qt.io/licensing/
 **
 ** This file is part of the QtKnx module.
@@ -27,50 +27,234 @@
 **
 ******************************************************************************/
 
-#ifndef NETIPDEVICECONFIGURATIONACKNOWLEDGE_H
-#define NETIPDEVICECONFIGURATIONACKNOWLEDGE_H
-
-#include <netip01.h>
-#include <netipframe.h>
-#include <qmyknx.h>
+#include "netipdeviceconfigurationacknowledge.h"
 
 QT_BEGIN_NAMESPACE
 
-class Q_KNX_EXPORT QKnxNetIpDeviceConfigurationAcknowledgeProxy final
+/*!
+    \class QKnxNetIpDeviceConfigurationAcknowledgeProxy
+
+    \inmodule QtKnx
+    \ingroup qtknx-device-management
+    \ingroup qtknx-netip
+
+    \brief The QKnxNetIpDeviceConfigurationAcknowledgeProxy class provides the
+    means to read a device configuration acknowledgment from the generic
+    \l QKnxNetIpFrame class and to create a KNXnet/IP frame based on the
+    information.
+
+    A KNXnet/IP client connects to a configuration and management data endpoint
+    of a KNXnet/IP server to send device configuration request frames and to
+    receive device configuration acknowledgment frames. A device configuration
+    request is used to read and write KNXnet/IP device configuration data. When
+    a server receives a configuration request, it responds with a device
+    configuration acknowledgment to confirm the reception of the request.
+
+    A device configuration acknowledgment frame contains the ID and status of
+    the communication channel between a KNXnet/IP client and server, as well as
+    the sequence number of the device configuration request frame.
+
+    The KNXnet/IP server discards device configuration request frames with
+    unexpected sequence numbers and does not send a device configuration
+    acknowledgment upon receiving them.
+
+    In most programs, this class will not be used directly. Instead, the
+    \l QKnxNetIpTunnel or \l QKnxNetIpDeviceManagement
+    class is used to establish a functional connection to a KNXnet/IP server.
+
+    \note When using QKnxNetIpDeviceConfigurationAcknowledgeProxy, care must be
+    taken to ensure that the referenced KNXnet/IP frame outlives the proxy on
+    all code paths, lest the proxy ends up referencing deleted data.
+
+    The following code sample illustrates how to read the device configuration
+    acknowledgment information sent by a KNXnet/IP client:
+
+    \code
+        auto frame = QKnxNetIpFrame::fromBytes(...);
+
+        const QKnxNetIpDeviceConfigurationAcknowledgeProxy proxy(netIpFrame);
+        if (!proxy.isValid())
+            return;
+
+        quint8 chanId = proxy.channelId();
+        quint8 seqNum = proxy.sequenceNumber();
+        QKnx::NetIp::Error error = proxy.status();
+    \endcode
+
+    \sa builder(), QKnxNetIpDeviceConfigurationRequestProxy,
+        {Qt KNX Device Management Classes}, {Qt KNXnet/IP Connection Classes}
+*/
+
+/*!
+    \fn QKnxNetIpDeviceConfigurationAcknowledgeProxy::QKnxNetIpDeviceConfigurationAcknowledgeProxy()
+    \internal
+*/
+
+/*!
+    \fn QKnxNetIpDeviceConfigurationAcknowledgeProxy::~QKnxNetIpDeviceConfigurationAcknowledgeProxy()
+    \internal
+*/
+
+/*!
+    \fn QKnxNetIpDeviceConfigurationAcknowledgeProxy::QKnxNetIpDeviceConfigurationAcknowledgeProxy(const QKnxNetIpFrame &&)
+    \internal
+*/
+
+/*!
+    Constructs a proxy object to read the device configuration acknowledgment
+    information carried by the specified KNXnet/IP frame \a frame.
+*/
+QKnxNetIpDeviceConfigurationAcknowledgeProxy::
+    QKnxNetIpDeviceConfigurationAcknowledgeProxy(const QKnxNetIpFrame &frame)
+    : m_frame(frame)
+{}
+
+/*!
+    Returns \c true if the frame contains initialized values and is in itself
+    valid, otherwise returns \c false. A valid KNXnet/IP frame consists of
+    at least a valid header and a size in bytes corresponding to the total size
+    of the KNXnet/IP frame header.
+
+    \sa QKnxNetIpFrameHeader::totalSize()
+*/
+bool QKnxNetIpDeviceConfigurationAcknowledgeProxy::isValid() const
 {
-public:
-    QKnxNetIpDeviceConfigurationAcknowledgeProxy() = delete;
-    ~QKnxNetIpDeviceConfigurationAcknowledgeProxy() = default;
+    return m_frame.isValid() && m_frame.size() == 10
+           && m_frame.serviceType() == QKnxNetIp::ServiceType::DeviceConfigurationAcknowledge;
+}
 
-    QKnxNetIpDeviceConfigurationAcknowledgeProxy(const QKnxNetIpFrame &&) = delete;
-    explicit QKnxNetIpDeviceConfigurationAcknowledgeProxy(const QKnxNetIpFrame &frame);
+/*!
+    Returns the ID of the communication channel between a KNXnet/IP client and
+    server.
+*/
+quint8 QKnxNetIpDeviceConfigurationAcknowledgeProxy::channelId() const
+{
+    return m_frame.channelId();
+}
 
-    bool isValid() const;
+/*!
+    Returns the sequence number of a device configuration request frame.
+*/
+quint8 QKnxNetIpDeviceConfigurationAcknowledgeProxy::sequenceNumber() const
+{
+    return m_frame.sequenceNumber();
+}
 
-    quint8 channelId() const;
-    quint8 sequenceNumber() const;
-    QKnxNetIp::Error status() const;
+/*!
+    Returns the status of the communication channel between a KNXnet/IP client
+    and server.
+*/
+QKnxNetIp::Error QKnxNetIpDeviceConfigurationAcknowledgeProxy::status() const
+{
+    return QKnxNetIp::Error(m_frame.serviceTypeSpecificValue());
+}
 
-    class Q_KNX_EXPORT Builder final
-    {
-    public:
-        Builder &setChannelId(quint8 channelId);
-        Builder &setSequenceNumber(quint8 sequenceNumber);
-        Builder &setStatus(QKnxNetIp::Error status);
+/*!
+    Returns a builder object to create a KNXnet/IP device configuration
+    acknowledgment frame.
+*/
+QKnxNetIpDeviceConfigurationAcknowledgeProxy::Builder
+QKnxNetIpDeviceConfigurationAcknowledgeProxy::builder()
+{
+    return QKnxNetIpDeviceConfigurationAcknowledgeProxy::Builder();
+}
 
-        QKnxNetIpFrame create() const;
 
-    private:
-        quint8 m_channelId;
-        quint8 m_sequenceNumber;
-        QKnxNetIp::Error m_status;
-    };
-    static QKnxNetIpDeviceConfigurationAcknowledgeProxy::Builder builder();
+/*!
+    \class QKnxNetIpDeviceConfigurationAcknowledgeProxy::Builder
 
-private:
-    const QKnxNetIpFrame &m_frame;
-};
+    \inmodule QtKnx
+    \inheaderfile QKnxNetIpDeviceConfigurationAcknowledgeProxy
+
+    \brief The QKnxNetIpDeviceConfigurationAcknowledgeProxy::Builder class
+    provides the means to create a KNXnet/IP device configuration
+    acknowledgment frame.
+
+    A KNXnet/IP client connects to a configuration and management data endpoint
+    of a KNXnet/IP server to send device configuration request frames and to
+    receive device configuration acknowledgment frames. A device configuration
+    request is used to read and write KNXnet/IP device configuration data. When
+    a server receives a configuration request, it responds with a device
+    configuration acknowledgment to confirm the reception of the request.
+
+    A device configuration acknowledgment frame contains the ID and status of
+    the communication channel between a KNXnet/IP client and server, as well as
+    the sequence number of the device configuration request frame.
+
+    The KNXnet/IP server discards device configuration request frames with
+    unexpected sequence numbers and does not send a device configuration
+    acknowledgment upon receiving them.
+
+    In most programs, this class will not be used directly. Instead, the
+    \l QKnxNetIpTunnel or \l QKnxNetIpDeviceManagement
+    class is used to establish a functional connection to a KNXnet/IP server.
+
+    The following code sample illustrates how to read the device configuration
+    request information sent by a KNXnet/IP client:
+
+    \code
+        auto netIpFrame = QKnxNetIpDeviceConfigurationAcknowledgeProxy::builder()
+            .setChannelId(200)
+            .setSequenceNumber(250)
+            .setStatus(QKnx::NetIp::Error::ConnectionId)
+            .create();
+    \endcode
+
+    If the KNXnet/IP client does not receive a device configuration
+    acknowledgment within the specified timeout or the status of a received
+    acknowledgment frame indicates that errors occurred, the client repeats
+    the device configuration request three times and then terminates the
+    connection by sending a disconnection request frame,
+    \l QKnxNetIpDisconnectRequestProxy, to the server’s control endpoint.
+
+    \sa {Qt KNX Device Management Classes}
+*/
+
+/*!
+    Sets the ID of the communication channel between a KNXnet/IP client and
+    server to \a channelId and returns a reference to the builder.
+*/
+QKnxNetIpDeviceConfigurationAcknowledgeProxy::Builder &
+QKnxNetIpDeviceConfigurationAcknowledgeProxy::Builder::setChannelId(quint8 channelId)
+{
+    m_channelId = channelId;
+    return *this;
+}
+
+/*!
+    Sets the sequence number of a device configuration request frame to
+    \a sequenceNumber and returns a reference to the builder.
+*/
+QKnxNetIpDeviceConfigurationAcknowledgeProxy::Builder &
+QKnxNetIpDeviceConfigurationAcknowledgeProxy::Builder::setSequenceNumber(quint8 sequenceNumber)
+{
+    m_sequenceNumber = sequenceNumber;
+    return *this;
+}
+
+/*!
+    Sets the status of the communication channel between a KNXnet/IP client and
+    server to \a status and returns a reference to the builder.
+*/
+QKnxNetIpDeviceConfigurationAcknowledgeProxy::Builder &
+QKnxNetIpDeviceConfigurationAcknowledgeProxy::Builder::setStatus(QKnxNetIp::Error status)
+{
+    m_status = status;
+    return *this;
+}
+
+/*!
+    Creates and returns a KNXnet/IP device configuration request frame.
+
+    \note The returned frame may be invalid depending on the values used during
+    setup.
+
+    \sa isValid()
+*/
+QKnxNetIpFrame QKnxNetIpDeviceConfigurationAcknowledgeProxy::Builder::create() const
+{
+    return { QKnxNetIp::ServiceType::DeviceConfigurationAcknowledge,
+            QKnxNetIpConnectionHeader { m_channelId, m_sequenceNumber, quint8(m_status) } };
+}
 
 QT_END_NAMESPACE
-
-#endif

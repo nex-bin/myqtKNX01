@@ -4,7 +4,7 @@
 
 #include <QtCore/qshareddata.h>
 
-#include <netipdivicedib.h>
+#include <netipdevicedib.h>
 #include <netiphpai.h>
 #include <netipserverfamiliesdib.h>
 

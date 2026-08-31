@@ -7,6 +7,33 @@ CONFIG += c++17
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
 SOURCES += \
+    dpt1bit.cpp \
+    dpt1bitcontrolled.cpp \
+    dpt1byte.cpp \
+    dpt2bitset.cpp \
+    dpt2bytefloat.cpp \
+    dpt2bytesignedvalue.cpp \
+    dpt2byteunsignedvalue.cpp \
+    dpt32bitset.cpp \
+    dpt3bitcontrolled.cpp \
+    dpt4bytefloat.cpp \
+    dpt4bytesignedvalue.cpp \
+    dpt4byteunsignedvalue.cpp \
+    dpt8bitset.cpp \
+    dpt8bitsignedvalue.cpp \
+    dpt8bitunsignedvalue.cpp \
+    dptchar.cpp \
+    dptcharstring.cpp \
+    dptdatapointtype.cpp \
+    dptdatapointtypefactory.cpp \
+    dptdatetime.cpp \
+    dptelectricalenergy.cpp \
+    dptentranceaccess.cpp \
+    dptscene.cpp \
+    dptstatusmode3.cpp \
+    dpttime.cpp \
+    dptutf8string.cpp \
+    dptvarstring.cpp \
     main.cpp \
     mainwindow.cpp \
     netip01.cpp \
@@ -17,11 +44,13 @@ SOURCES += \
     netipconnectresponse.cpp \
     netipcrd.cpp \
     netipcri.cpp \
+    netipdescriptionrequest.cpp \
+    netipdescriptionresponse.cpp \
     netipdeviceconfigurationacknowledge.cpp \
     netipdeviceconfigurationrequest.cpp \
+    netipdevicedib.cpp \
     netipdisconnectrequest.cpp \
     netipdisconnectresponse.cpp \
-    netipdivicedib.cpp \
     netipendpointconnection.cpp \
     netipextendeddevicedib.cpp \
     netipframe.cpp \
@@ -60,6 +89,7 @@ SOURCES += \
     qnewdevicemanagementframefactory.cpp \
     qnewextendedcontrolfield.cpp \
     qnewinterfaceobjectproperty.cpp \
+    qnewinterfaceobjectpropertydatatype.cpp \
     qnewinterfaceobjecttype.cpp \
     qnewkeyring.cpp \
     qnewlinklayerframe.cpp \
@@ -67,9 +97,40 @@ SOURCES += \
     qnewprojectutils_p.cpp \
     qnewsecurekey.cpp \
     qnewssl_openssl.cpp \
-    qnewtpdu.cpp
+    qnewtpdu.cpp \
+    qnewtpdufactory_broadcast.cpp \
+    qnewtpdufactory_multicast.cpp \
+    qnewtpdufactory_p2p.cpp
 
 HEADERS += \
+    dpt1bit.h \
+    dpt1bitcontrolled.h \
+    dpt1byte.h \
+    dpt2bitset.h \
+    dpt2bytefloat.h \
+    dpt2bytesignedvalue.h \
+    dpt2byteunsignedvalue.h \
+    dpt32bitset.h \
+    dpt3bitcontrolled.h \
+    dpt4bytefloat.h \
+    dpt4bytesignedvalue.h \
+    dpt4byteunsignedvalue.h \
+    dpt8bitset.h \
+    dpt8bitsignedvalue.h \
+    dpt8bitunsignedvalue.h \
+    dptchar.h \
+    dptcharstring.h \
+    dptdatapointtype.h \
+    dptdatapointtype_p.h \
+    dptdatapointtypefactory.h \
+    dptdatetime.h \
+    dptelectricalenergy.h \
+    dptentranceaccess.h \
+    dptscene.h \
+    dptstatusmode3.h \
+    dpttime.h \
+    dptutf8string.h \
+    dptvarstring.h \
     mainwindow.h \
     myqglobal_p.h \
     myqtnetworkglobal_p.h \
@@ -81,11 +142,13 @@ HEADERS += \
     netipconnectresponse.h \
     netipcrd.h \
     netipcri.h \
+    netipdescriptionrequest.h \
+    netipdescriptionresponse.h \
     netipdeviceconfigurationacknowledge.h \
     netipdeviceconfigurationrequest.h \
+    netipdevicedib.h \
     netipdisconnectrequest.h \
     netipdisconnectresponse.h \
-    netipdivicedib.h \
     netipendpointconnection.h \
     netipendpointconnection_p.h \
     netipextendeddevicedib.h \
@@ -129,6 +192,7 @@ HEADERS += \
     qnewdevicemanagementframefactory.h \
     qnewextendedcontrolfield.h \
     qnewinterfaceobjectproperty.h \
+    qnewinterfaceobjectpropertydatatype.h \
     qnewinterfaceobjecttype.h \
     qnewkeyring_p.h \
     qnewlinklayerframe.h \
@@ -138,6 +202,7 @@ HEADERS += \
     qnewsecurekey.h \
     qnewssl_p.h \
     qnewtpdu.h \
+    qnewtpdufactory_p.h \
     qnewtraits.h \
     qnewutils.h
 
@@ -148,6 +213,14 @@ FORMS += \
 qnx: target.path = /tmp/$${TARGET}/bin
 else: unix:!android: target.path = /opt/$${TARGET}/bin
 !isEmpty(target.path): INSTALLS += target
+
+CONFIG(debug, debug|release) {
+    message("Debug mode")
+    # 可选：添加调试信息
+    QMAKE_CXXFLAGS += -g
+} else {
+    message("Release mode")
+}
 
 # 在你的主项目 .pro 文件中
 # LIBS += -L/path/to/mymod/lib -lQt6MyMOD

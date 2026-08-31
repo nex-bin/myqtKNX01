@@ -1,4 +1,4 @@
-#include "netipdivicedib.h"
+#include "netipdevicedib.h"
 #include "qnewutils.h"
 
 QT_BEGIN_NAMESPACE

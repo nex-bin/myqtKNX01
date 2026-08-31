@@ -27,8 +27,8 @@
 **
 ******************************************************************************/
 
-#ifndef QKNXNETIPDEVICECONFIGURATIONACKNOWLEDGE_H
-#define QKNXNETIPDEVICECONFIGURATIONACKNOWLEDGE_H
+#ifndef NETIPDEVICECONFIGURATIONACKNOWLEDGE_H
+#define NETIPDEVICECONFIGURATIONACKNOWLEDGE_H
 
 #include <netip01.h>
 #include <netipframe.h>
