@@ -35,7 +35,9 @@ SOURCES += \
     dptutf8string.cpp \
     dptvarstring.cpp \
     main.cpp \
+    mainwin.cpp \
     mainwindow.cpp \
+    myknxnetwork.cpp \
     netip01.cpp \
     netipconnectionheader.cpp \
     netipconnectionstaterequest.cpp \
@@ -100,7 +102,10 @@ SOURCES += \
     qnewtpdu.cpp \
     qnewtpdufactory_broadcast.cpp \
     qnewtpdufactory_multicast.cpp \
-    qnewtpdufactory_p2p.cpp
+    qnewtpdufactory_p2p.cpp \
+    userface.cpp \
+    usermainpage.cpp \
+    userpage.cpp
 
 HEADERS += \
     dpt1bit.h \
@@ -131,7 +136,9 @@ HEADERS += \
     dpttime.h \
     dptutf8string.h \
     dptvarstring.h \
+    mainwin.h \
     mainwindow.h \
+    myknxnetwork.h \
     myqglobal_p.h \
     myqtnetworkglobal_p.h \
     netip01.h \
@@ -204,10 +211,16 @@ HEADERS += \
     qnewtpdu.h \
     qnewtpdufactory_p.h \
     qnewtraits.h \
-    qnewutils.h
+    qnewutils.h \
+    userface.h \
+    usermainpage.h \
+    userpage.h
 
 FORMS += \
-    mainwindow.ui
+    mainwindow.ui \
+    userface.ui \
+    usermainpage.ui \
+    userpage.ui
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin

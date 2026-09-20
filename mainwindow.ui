@@ -262,7 +262,11 @@
          </widget>
         </item>
         <item>
-         <widget class="QLineEdit" name="lineEdit_7"/>
+         <widget class="QLineEdit" name="lineEdit_7">
+          <property name="text">
+           <string/>
+          </property>
+         </widget>
         </item>
         <item>
          <widget class="QLabel" name="label_12">
@@ -318,8 +322,26 @@
      <height>25</height>
     </rect>
    </property>
+   <widget class="QMenu" name="menu">
+    <property name="title">
+     <string>调试</string>
+    </property>
+    <addaction name="actionKNXnetIp"/>
+    <addaction name="actionUserpage"/>
+   </widget>
+   <addaction name="menu"/>
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
+  <action name="actionKNXnetIp">
+   <property name="text">
+    <string>KNXnetIp连接</string>
+   </property>
+  </action>
+  <action name="actionUserpage">
+   <property name="text">
+    <string>用户界面编辑</string>
+   </property>
+  </action>
  </widget>
  <resources/>
  <connections/>
