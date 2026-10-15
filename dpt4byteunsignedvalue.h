@@ -34,7 +34,7 @@
 
 QT_BEGIN_NAMESPACE
 
-class Q_KNX_EXPORT QKnx4ByteUnsignedValue : public QKnxFixedSizeDatapointType
+class MYLIB_EXPORT QKnx4ByteUnsignedValue : public QKnxFixedSizeDatapointType
 {
 public:
 
@@ -53,7 +53,7 @@ protected:
     QKnx4ByteUnsignedValue(int subType, quint32 value);
 };
 
-class Q_KNX_EXPORT QKnxValue4UCount : public QKnx4ByteUnsignedValue
+class MYLIB_EXPORT QKnxValue4UCount : public QKnx4ByteUnsignedValue
 {
 public :
     QKnxValue4UCount();

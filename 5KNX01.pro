@@ -108,6 +108,8 @@ SOURCES += \
     userpage.cpp
 
 HEADERS += \
+    MyKnxLib.h \
+    basicdatatype.h \
     dpt1bit.h \
     dpt1bitcontrolled.h \
     dpt1byte.h \
@@ -139,6 +141,7 @@ HEADERS += \
     mainwin.h \
     mainwindow.h \
     myknxnetwork.h \
+    mylib_global.h \
     myqglobal_p.h \
     myqtnetworkglobal_p.h \
     netip01.h \
@@ -222,6 +225,20 @@ FORMS += \
     usermainpage.ui \
     userpage.ui
 
+INCLUDEPATH += $$PWD/../breakpad/qBreakpad/handler
+INCLUDEPATH += $$PWD/../breakpad/qBreakpad/handler/singletone
+# INCLUDEPATH += $$PWD/../qBreakpad/handler
+# LIBS += -L$$PWD/../qBreakpad/handler -lqBreakpad
+LIBS += -L$$PWD/../breakpad/qBreakpad/handler  -lqBreakpad
+
+# 静态编译
+DEFINES += my_KNX_STATIC
+
+# 动态编译
+# DEFINES += QT_BUILD_KNX_LIB
+# TEMPLATE = lib
+# CONFIG += shared
+
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin
 else: unix:!android: target.path = /opt/$${TARGET}/bin
@@ -235,8 +252,15 @@ CONFIG(debug, debug|release) {
     message("Release mode")
 }
 
-# 在你的主项目 .pro 文件中
-# LIBS += -L/path/to/mymod/lib -lQt6MyMOD
-# LIBS += -LD:/programs/QT/myQTools/mymod/lib -lQt6MyMOD
-# INCLUDEPATH += /path/to/mymod/src
-# INCLUDEPATH += D:/programs/QT/myQTools/mymod/src
+# 用于保留调试符号
+QMAKE_CXXFLAGS_RELEASE = $$QMAKE_CFLAGS_RELEASE_WITH_DEBUGINFO
+QMAKE_LFLAGS_RELEASE = $$QMAKE_LFLAGS_RELEASE_WITH_DEBUGINFO
+
+#动态链接库文件生成 需要
+# TEMPLATE = lib
+# CONFIG += shared
+# TARGET = MyLib
+# DEFINES += MYLIB_LIBRARY
+
+RC_ICONS = cookie.ico
+

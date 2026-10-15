@@ -6,9 +6,11 @@
 #include <qmyknx.h>
 #include <qnewutils.h>
 
+#include "mylib_global.h"
+
 QT_BEGIN_NAMESPACE
 
-class Q_KNX_EXPORT QKnxAddress final
+class MYLIB_EXPORT QKnxAddress final
 {
 public:
     enum class Type : quint8
@@ -44,8 +46,8 @@ public:
     bool isUnregistered() const;
     bool isCouplerOrRouter() const;
 
-    struct Q_KNX_EXPORT Group final { static QKnxAddress Broadcast; };
-    struct Q_KNX_EXPORT Individual final { static QKnxAddress Unregistered; };
+    struct MYLIB_EXPORT Group final { static QKnxAddress Broadcast; };
+    struct MYLIB_EXPORT Individual final { static QKnxAddress Unregistered; };
 
 
     quint8 size() const { return 2; }
@@ -68,8 +70,8 @@ private:
     qint32 m_address = -1;
     QKnxAddress::Type m_type = static_cast<QKnxAddress::Type>(0xff);
 };
-Q_KNX_EXPORT QDebug operator<<(QDebug debug, const QKnxAddress &address);
-Q_KNX_EXPORT Q_DECL_PURE_FUNCTION uint qHash(const QKnxAddress &key, uint seed = 0) Q_DECL_NOTHROW;
+MYLIB_EXPORT QDebug operator<<(QDebug debug, const QKnxAddress &address);
+MYLIB_EXPORT Q_DECL_PURE_FUNCTION uint qHash(const QKnxAddress &key, uint seed = 0) Q_DECL_NOTHROW;
 
 Q_DECLARE_TYPEINFO(QKnxAddress::Type, Q_PRIMITIVE_TYPE);
 Q_DECLARE_TYPEINFO(QKnxAddress::Notation, Q_PRIMITIVE_TYPE);

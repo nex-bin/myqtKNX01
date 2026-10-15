@@ -49,12 +49,12 @@
 
 QT_BEGIN_NAMESPACE
 
-class Q_KNX_EXPORT QKnxTpduFactory final
+class MYLIB_EXPORT QKnxTpduFactory final
 {
 public:
     QKnxTpduFactory() = delete;
 
-    struct Q_KNX_EXPORT Multicast
+    struct MYLIB_EXPORT Multicast
     {
         Multicast() = delete;
 
@@ -79,7 +79,7 @@ public:
                                                                const QKnxByteArray &data);
     };
 
-    struct Q_KNX_EXPORT Broadcast
+    struct MYLIB_EXPORT Broadcast
     {
         Broadcast() = delete;
 
@@ -141,7 +141,7 @@ public:
                                                                quint16 parameters);
     };
 
-    struct Q_KNX_EXPORT PointToPoint
+    struct MYLIB_EXPORT PointToPoint
     {
         PointToPoint() = delete;
 
@@ -214,7 +214,7 @@ public:
                                                        const QKnxByteArray &data, quint8 seqNumber = 0);
     };
 
-    struct Q_KNX_EXPORT PointToPointConnectionless
+    struct MYLIB_EXPORT PointToPointConnectionless
     {
         PointToPointConnectionless() = delete;
 
@@ -227,7 +227,7 @@ public:
                                                         const QKnxByteArray &value);
     };
 
-    struct Q_KNX_EXPORT PointToPointConnectionOriented
+    struct MYLIB_EXPORT PointToPointConnectionOriented
     {
         PointToPointConnectionOriented() = delete;
 

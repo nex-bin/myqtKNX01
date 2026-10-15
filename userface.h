@@ -1,9 +1,13 @@
 #ifndef USERFACE_H
 #define USERFACE_H
 
+#include <basicdatatype.h>
 #include <QWidget>
 #include <QHostAddress>
+#include "QPlainTextEdit"
 
+#include "QGroupBox"
+#include "QButtonGroup"
 namespace Ui {
 class userface;
 }
@@ -15,23 +19,41 @@ class userface : public QWidget
 public:
     explicit userface(QWidget *parent = nullptr);
     ~userface();
+    QList <QHostAddress> m_address;
+    QPlainTextEdit * deviceFinded_plain;
+    QPlainTextEdit * deviceDetailInfo_plain;
+
+    bool busyflag = false;
+
 
     void init();
-    void resLocalIpaddress(QList <QHostAddress> addresses);
+
+    void init_checkbox();
+
+    void onLocalIpaddress(QList <QHostAddress> addresses);
+    void onFindedDeviceInfo(QList <DeviceInfo>);
+    void onDeviceDetailInfo(QString);
+    void onconnectInfo(QString , quint8);
+    void onConnectState(Appstate);
+    void onValueSendState(ValueSendState);
 
 private:
     Ui::userface *ui;
     void sendfleshport();
     void sendsearchrequest();
+    void senddescriptionrequest();
     void sendconnectrequest();
     void senddisconnectrequest();
 
+    void sendknxvalue();
 signals:
-    void askLocalIpaddress();
-    void fleshport();
-    void searchrequest();
-    void connectrequest();
-    void disconnectrequest();
+    void sigLocalIpaddress();
+    void sigfleshport();
+    void sigsearchrequest(QString localIP);
+    void sigdescriptionrequest(ips);
+    void sigconnectrequest(ips);
+    void sigdisconnect();
+    void sigsendvalue(QString,QString);
 };
 
 #endif // USERFACE_H

@@ -34,7 +34,7 @@
 
 QT_BEGIN_NAMESPACE
 
-class Q_KNX_EXPORT QKnx2BitSet : public QKnxFixedSizeDatapointType
+class MYLIB_EXPORT QKnx2BitSet : public QKnxFixedSizeDatapointType
 {
     Q_GADGET
 
@@ -54,7 +54,7 @@ protected:
     explicit QKnx2BitSet(int subType, quint8 value);
 };
 
-class Q_KNX_EXPORT QKnxOnOffAction : public QKnx2BitSet
+class MYLIB_EXPORT QKnxOnOffAction : public QKnx2BitSet
 {
     Q_GADGET
 
@@ -77,7 +77,7 @@ public:
     bool setAction(Action action);
 };
 
-class Q_KNX_EXPORT QKnxAlarmReaction : public QKnx2BitSet
+class MYLIB_EXPORT QKnxAlarmReaction : public QKnx2BitSet
 {
     Q_GADGET
 
@@ -99,7 +99,7 @@ public:
     bool setAlarm(Alarm alarm);
 };
 
-class Q_KNX_EXPORT QKnxUpDownAction : public QKnx2BitSet
+class MYLIB_EXPORT QKnxUpDownAction : public QKnx2BitSet
 {
     Q_GADGET
 

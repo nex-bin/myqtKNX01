@@ -9,7 +9,7 @@
 
 QT_BEGIN_NAMESPACE
 
-class Q_KNX_EXPORT QKnxCryptographicEngine final
+class MYLIB_EXPORT QKnxCryptographicEngine final
 {
 public:
     QKnxCryptographicEngine() = delete;

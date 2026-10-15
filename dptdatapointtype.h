@@ -38,11 +38,13 @@
 #include <qnewbytearray.h>
 #include <qmyknx.h>
 
+#include "mylib_global.h"
+
 QT_BEGIN_NAMESPACE
 
 struct QKnxDatapointTypePrivate;
 
-class Q_KNX_EXPORT QKnxDatapointType
+class MYLIB_EXPORT QKnxDatapointType
 {
     Q_GADGET
     Q_DECLARE_TR_FUNCTIONS(QKnxDatapointType)
@@ -247,7 +249,7 @@ using QKnxFixedSizeDatapointType = QKnxDatapointType;
 class QKnxFixedSizeDatapointType : public QKnxDatapointType {public:};
 #endif
 
-class Q_KNX_EXPORT QKnxVariableSizeDatapointType : public QKnxDatapointType
+class MYLIB_EXPORT QKnxVariableSizeDatapointType : public QKnxDatapointType
 {
 public:
     QKnxVariableSizeDatapointType(Type type, int size);
@@ -256,7 +258,7 @@ public:
 
     bool setBytes(const QKnxByteArray &bytesToSet, quint16 index, quint16 count) override;
 };
-Q_KNX_EXPORT QDebug operator<<(QDebug debug, const QKnxDatapointType &dpt);
+MYLIB_EXPORT QDebug operator<<(QDebug debug, const QKnxDatapointType &dpt);
 
 inline uint qHash(const QKnxDatapointType::Type &key, uint seed)
 {

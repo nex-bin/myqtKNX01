@@ -9,7 +9,7 @@
 QT_BEGIN_NAMESPACE
 
 class QKnxNetIpSearchResponseExtendedBuilderPrivate;
-class Q_KNX_EXPORT QKnxNetIpSearchResponseProxy final
+class MYLIB_EXPORT QKnxNetIpSearchResponseProxy final
 {
 public:
     QKnxNetIpSearchResponseProxy() = delete;
@@ -28,7 +28,7 @@ public:
     QVector<QKnxNetIpDib> optionalDibs() const;
     QVector<QKnxNetIpDib> variableDibs() const;
 
-    class Q_KNX_EXPORT Builder final
+    class MYLIB_EXPORT Builder final
     {
     public:
         Builder &setControlEndpoint(const QKnxNetIpHpai &hpai);
@@ -44,7 +44,7 @@ public:
     };
     static QKnxNetIpSearchResponseProxy::Builder builder();
 
-    class Q_KNX_EXPORT ExtendedBuilder final
+    class MYLIB_EXPORT ExtendedBuilder final
     {
     public:
         ExtendedBuilder();

@@ -36,7 +36,7 @@
 QT_BEGIN_NAMESPACE
 
 class QKnxNetIpSecureWrapperPrivate;
-class Q_KNX_EXPORT QKnxNetIpSecureWrapperProxy final
+class MYLIB_EXPORT QKnxNetIpSecureWrapperProxy final
 {
 public:
     QKnxNetIpSecureWrapperProxy() = delete;
@@ -54,7 +54,7 @@ public:
     QKnxByteArray encapsulatedFrame() const;
     QKnxByteArray messageAuthenticationCode() const;
 
-    class Q_KNX_EXPORT Builder final
+    class MYLIB_EXPORT Builder final
     {
     public:
         Builder();
@@ -77,7 +77,7 @@ public:
     };
     static QKnxNetIpSecureWrapperProxy::Builder builder();
 
-    class Q_KNX_EXPORT SecureBuilder final
+    class MYLIB_EXPORT SecureBuilder final
     {
     public:
         SecureBuilder();

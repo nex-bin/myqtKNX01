@@ -36,7 +36,7 @@
 QT_BEGIN_NAMESPACE
 
 class QKnxNetIpTimerNotifyBuilderPrivate;
-class Q_KNX_EXPORT QKnxNetIpTimerNotifyProxy final
+class MYLIB_EXPORT QKnxNetIpTimerNotifyProxy final
 {
 public:
     QKnxNetIpTimerNotifyProxy() = delete;
@@ -52,7 +52,7 @@ public:
     quint16 messageTag() const;
     QKnxByteArray messageAuthenticationCode() const;
 
-    class Q_KNX_EXPORT Builder final
+    class MYLIB_EXPORT Builder final
     {
     public:
         Builder();
@@ -73,7 +73,7 @@ public:
     };
     static QKnxNetIpTimerNotifyProxy::Builder builder();
 
-    class Q_KNX_EXPORT SecureBuilder final
+    class MYLIB_EXPORT SecureBuilder final
     {
     public:
         SecureBuilder();

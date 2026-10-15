@@ -38,7 +38,7 @@
 
 QT_BEGIN_NAMESPACE
 
-class Q_KNX_EXPORT QKnxDeviceManagementFrame::Builder final
+class MYLIB_EXPORT QKnxDeviceManagementFrame::Builder final
 {
 public:
     Builder() = default;
@@ -61,7 +61,7 @@ private:
     QKnxByteArray m_data;
 };
 
-class Q_KNX_EXPORT QKnxDeviceManagementFrame::PropertyReadBuilder final
+class MYLIB_EXPORT QKnxDeviceManagementFrame::PropertyReadBuilder final
 {
 public:
     PropertyReadBuilder &setObjectType(QKnxInterfaceObjectType type);
@@ -82,7 +82,7 @@ private:
     mutable QKnxDeviceManagementFrame::Builder m_builder;
 };
 
-class Q_KNX_EXPORT QKnxDeviceManagementFrame::PropertyWriteBuilder final
+class MYLIB_EXPORT QKnxDeviceManagementFrame::PropertyWriteBuilder final
 {
 public:
     PropertyWriteBuilder &setObjectType(QKnxInterfaceObjectType type);
@@ -103,7 +103,7 @@ private:
     mutable QKnxDeviceManagementFrame::Builder m_builder;
 };
 
-class Q_KNX_EXPORT QKnxDeviceManagementFrame::PropertyInfoBuilder final
+class MYLIB_EXPORT QKnxDeviceManagementFrame::PropertyInfoBuilder final
 {
 public:
     PropertyInfoBuilder();
@@ -122,7 +122,7 @@ private:
     mutable QKnxDeviceManagementFrame::Builder m_builder;
 };
 
-class Q_KNX_EXPORT QKnxDeviceManagementFrame::FunctionPropertyCommandBuilder final
+class MYLIB_EXPORT QKnxDeviceManagementFrame::FunctionPropertyCommandBuilder final
 {
 public:
     FunctionPropertyCommandBuilder &setObjectType(QKnxInterfaceObjectType type);
@@ -139,7 +139,7 @@ private:
     mutable QKnxDeviceManagementFrame::Builder m_builder;
 };
 
-class Q_KNX_EXPORT QKnxDeviceManagementFrame::FunctionPropertyStateReadBuilder final
+class MYLIB_EXPORT QKnxDeviceManagementFrame::FunctionPropertyStateReadBuilder final
 {
 public:
     FunctionPropertyStateReadBuilder &setObjectType(QKnxInterfaceObjectType type);
@@ -156,7 +156,7 @@ private:
     mutable QKnxDeviceManagementFrame::Builder m_builder;
 };
 
-class Q_KNX_EXPORT QKnxDeviceManagementFrame::ResetBuilder final
+class MYLIB_EXPORT QKnxDeviceManagementFrame::ResetBuilder final
 {
 public:
     QKnxDeviceManagementFrame createRequest();

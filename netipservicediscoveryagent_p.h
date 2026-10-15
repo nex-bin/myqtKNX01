@@ -95,7 +95,7 @@ private:
     QKnxNetIpServerDiscoveryAgent::State m_state { QKnxNetIpServerDiscoveryAgent::State::NotRunning };
 };
 
-class Q_KNX_EXPORT QKnxNetIpServerDiscoveryAgentPrivate final : public QObjectPrivate
+class MYLIB_EXPORT QKnxNetIpServerDiscoveryAgentPrivate final : public QObjectPrivate
 {
     Q_DECLARE_PUBLIC(QKnxNetIpServerDiscoveryAgent)
 

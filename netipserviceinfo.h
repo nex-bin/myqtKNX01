@@ -15,7 +15,7 @@ QT_BEGIN_NAMESPACE
 
 struct QKnxNetIpServerInfoPrivate;
 
-class Q_KNX_EXPORT QKnxNetIpServerInfo final
+class MYLIB_EXPORT QKnxNetIpServerInfo final
 {
     friend class Discoverer;
     friend class QKnxNetIpServerDiscoveryAgentPrivate;

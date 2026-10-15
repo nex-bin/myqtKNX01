@@ -115,10 +115,10 @@ using QKnxNetIpDib = QKnxNetIpStruct<QKnxNetIp::DescriptionType>;
 using QKnxNetIpSrp = QKnxNetIpStruct<QKnxNetIp::SearchParameterType>;
 
 
-Q_KNX_EXPORT QDebug operator<<(QDebug debug, const QKnxNetIpStruct<QKnxNetIp::HostProtocol> &hpai);
-Q_KNX_EXPORT QDebug operator<<(QDebug debug, const QKnxNetIpStruct<QKnxNetIp::ConnectionType> &cr);
-Q_KNX_EXPORT QDebug operator<<(QDebug debug, const QKnxNetIpStruct<QKnxNetIp::DescriptionType> &dib);
-Q_KNX_EXPORT QDebug operator<<(QDebug debug, const QKnxNetIpStruct<QKnxNetIp::SearchParameterType> &srp);
+MYLIB_EXPORT QDebug operator<<(QDebug debug, const QKnxNetIpStruct<QKnxNetIp::HostProtocol> &hpai);
+MYLIB_EXPORT QDebug operator<<(QDebug debug, const QKnxNetIpStruct<QKnxNetIp::ConnectionType> &cr);
+MYLIB_EXPORT QDebug operator<<(QDebug debug, const QKnxNetIpStruct<QKnxNetIp::DescriptionType> &dib);
+MYLIB_EXPORT QDebug operator<<(QDebug debug, const QKnxNetIpStruct<QKnxNetIp::SearchParameterType> &srp);
 
 template <typename CodeType>
 Q_DECL_PURE_FUNCTION uint qHash(const QKnxNetIpStruct<CodeType> &key, uint seed = 0) Q_DECL_NOTHROW

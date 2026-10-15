@@ -35,7 +35,7 @@
 
 QT_BEGIN_NAMESPACE
 
-class Q_KNX_EXPORT QKnxInterfaceObjectProperty final
+class MYLIB_EXPORT QKnxInterfaceObjectProperty final
 {
     Q_GADGET
 

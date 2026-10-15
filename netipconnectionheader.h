@@ -2,10 +2,11 @@
 #define NETIPCONNECTIONHEADER_H
 
 #include <qnewbytearray.h>
+#include <qmyknx.h>
 
 QT_BEGIN_NAMESPACE
 
-class QKnxNetIpConnectionHeader final
+class MYLIB_EXPORT QKnxNetIpConnectionHeader final
 {
 public:
     QKnxNetIpConnectionHeader() = default;

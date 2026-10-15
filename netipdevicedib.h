@@ -8,7 +8,7 @@
 
 QT_BEGIN_NAMESPACE
 
-class Q_KNX_EXPORT QKnxNetIpDeviceDibProxy final
+class MYLIB_EXPORT QKnxNetIpDeviceDibProxy final
 {
 public:
     QKnxNetIpDeviceDibProxy() = delete;
@@ -31,7 +31,7 @@ public:
     QKnxByteArray macAddress() const;
     QByteArray deviceName() const;
 
-    class Q_KNX_EXPORT Builder final
+    class MYLIB_EXPORT Builder final
     {
     public:
         Builder &setMediumType(MediumType mediumType);

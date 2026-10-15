@@ -34,7 +34,7 @@
 
 QT_BEGIN_NAMESPACE
 
-class Q_KNX_EXPORT QKnx2ByteSignedValue : public QKnxFixedSizeDatapointType
+class MYLIB_EXPORT QKnx2ByteSignedValue : public QKnxFixedSizeDatapointType
 {
 public:
     QKnx2ByteSignedValue();
@@ -53,7 +53,7 @@ protected:
 };
 
 #define CREATE_CLASS_DECLARATION(CLASS, SUB_TYPE) \
-class Q_KNX_EXPORT CLASS : public QKnx2ByteSignedValue \
+class MYLIB_EXPORT CLASS : public QKnx2ByteSignedValue \
 { \
     public: \
     CLASS(); \

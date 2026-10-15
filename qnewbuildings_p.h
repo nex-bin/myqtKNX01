@@ -8,7 +8,7 @@
 
 QT_BEGIN_NAMESPACE
 
-struct Q_KNX_EXPORT QKnxGroupAddressRef
+struct MYLIB_EXPORT QKnxGroupAddressRef
 {
     Q_DECLARE_TR_FUNCTIONS(QKnxGroupAddressRef)
 
@@ -22,7 +22,7 @@ public:
     bool parseElement(QXmlStreamReader *reader, bool pedantic);
 };
 
-struct Q_KNX_EXPORT QKnxFunction
+struct MYLIB_EXPORT QKnxFunction
 {
     Q_DECLARE_TR_FUNCTIONS(QKnxFunction)
 
@@ -45,7 +45,7 @@ public:
     bool parseElement(QXmlStreamReader *reader, bool pedantic);
 };
 
-struct Q_KNX_EXPORT QKnxBuildingPart
+struct MYLIB_EXPORT QKnxBuildingPart
 {
     Q_DECLARE_TR_FUNCTIONS(QKnxBuildingPart)
 
@@ -72,7 +72,7 @@ public:
     bool parseElement(QXmlStreamReader *reader, bool pedantic);
 };
 
-struct Q_KNX_EXPORT QKnxBuildings
+struct MYLIB_EXPORT QKnxBuildings
 {
     Q_DECLARE_TR_FUNCTIONS(QKnxBuildings)
 

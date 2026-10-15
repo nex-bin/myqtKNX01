@@ -119,7 +119,7 @@ struct Endpoint final
     QKnxNetIp::HostProtocol hostProtocol { QKnxNetIp::HostProtocol::UDP_IPv4 };
 };
 
-class Q_KNX_EXPORT QKnxNetIpEndpointConnectionPrivate : public QObjectPrivate
+class MYLIB_EXPORT QKnxNetIpEndpointConnectionPrivate : public QObjectPrivate
 {
     Q_DECLARE_PUBLIC(QKnxNetIpEndpointConnection)
 

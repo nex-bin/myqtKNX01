@@ -37,7 +37,7 @@
 QT_BEGIN_NAMESPACE
 
 class QKnxNetIpSessionRequestBuilderPrivate;
-class Q_KNX_EXPORT QKnxNetIpSessionRequestProxy final
+class MYLIB_EXPORT QKnxNetIpSessionRequestProxy final
 {
 public:
     QKnxNetIpSessionRequestProxy() = delete;
@@ -51,7 +51,7 @@ public:
     QKnxNetIpHpai controlEndpoint() const;
     QKnxByteArray publicKey() const;
 
-    class Q_KNX_EXPORT Builder final
+    class MYLIB_EXPORT Builder final
     {
     public:
         Builder();

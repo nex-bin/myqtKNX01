@@ -41,7 +41,7 @@
 QT_BEGIN_NAMESPACE
 
 class QKnxDeviceManagementFramePrivate;
-class Q_KNX_EXPORT QKnxDeviceManagementFrame final
+class MYLIB_EXPORT QKnxDeviceManagementFrame final
 {
     Q_GADGET
 
@@ -126,25 +126,25 @@ public:
     bool operator==(const QKnxDeviceManagementFrame &other) const;
     bool operator!=(const QKnxDeviceManagementFrame &other) const;
 
-    class Q_KNX_EXPORT Builder;
+    class MYLIB_EXPORT Builder;
     static QKnxDeviceManagementFrame::Builder builder();
 
-    class Q_KNX_EXPORT PropertyReadBuilder;
+    class MYLIB_EXPORT PropertyReadBuilder;
     static PropertyReadBuilder propertyReadBuilder();
 
-    class Q_KNX_EXPORT PropertyWriteBuilder;
+    class MYLIB_EXPORT PropertyWriteBuilder;
     static PropertyWriteBuilder propertyWriteBuilder();
 
-    class Q_KNX_EXPORT PropertyInfoBuilder;
+    class MYLIB_EXPORT PropertyInfoBuilder;
     static PropertyInfoBuilder propertyInfoBuilder();
 
-    class Q_KNX_EXPORT FunctionPropertyCommandBuilder;
+    class MYLIB_EXPORT FunctionPropertyCommandBuilder;
     static FunctionPropertyCommandBuilder functionPropertyCommandBuilder();
 
-    class Q_KNX_EXPORT FunctionPropertyStateReadBuilder;
+    class MYLIB_EXPORT FunctionPropertyStateReadBuilder;
     static FunctionPropertyStateReadBuilder functionPropertyStateReadBuilder();
 
-    class Q_KNX_EXPORT ResetBuilder;
+    class MYLIB_EXPORT ResetBuilder;
     static ResetBuilder resetBuilder();
 
 private:
@@ -154,7 +154,7 @@ private:
 private:
     QSharedDataPointer<QKnxDeviceManagementFramePrivate> d_ptr;
 };
-Q_KNX_EXPORT QDebug operator<<(QDebug debug, const QKnxDeviceManagementFrame &frame);
+MYLIB_EXPORT QDebug operator<<(QDebug debug, const QKnxDeviceManagementFrame &frame);
 
 QT_END_NAMESPACE
 

@@ -37,7 +37,7 @@
 QT_BEGIN_NAMESPACE
 
 class QKnxNetIpSessionStatusBuilderPrivate;
-class Q_KNX_EXPORT QKnxNetIpSessionStatusProxy final
+class MYLIB_EXPORT QKnxNetIpSessionStatusProxy final
 {
 public:
     QKnxNetIpSessionStatusProxy() = delete;
@@ -49,7 +49,7 @@ public:
     bool isValid() const;
     QKnxNetIp::SecureSessionStatus status() const;
 
-    class Q_KNX_EXPORT Builder final
+    class MYLIB_EXPORT Builder final
     {
     public:
         Builder();

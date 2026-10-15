@@ -28,7 +28,7 @@ enum class MediumType : quint8
     TP0 = 0x01,
     TP = 0x02,
     PL132 = 0x03,
-    PL = 0x04,
+    PL110 = 0x04,
     RF = 0x10,
     NetIP = 0x20
 

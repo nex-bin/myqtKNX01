@@ -10,7 +10,7 @@ QT_BEGIN_NAMESPACE
 
 struct QKnxServiceInfo;
 
-class Q_KNX_EXPORT QKnxNetIpSrpProxy final
+class MYLIB_EXPORT QKnxNetIpSrpProxy final
 {
     class MacAddressPrivate;
     class ProgrammingModePrivate;
@@ -34,7 +34,7 @@ public:
     QKnxServiceInfo serviceInfo() const;
     QVector<QKnxNetIp::DescriptionType> descriptionTypes() const;
 
-    class Q_KNX_EXPORT ProgrammingMode final
+    class MYLIB_EXPORT ProgrammingMode final
     {
     public:
         ProgrammingMode();
@@ -52,7 +52,7 @@ public:
     };
     static QKnxNetIpSrpProxy::ProgrammingMode programmingModeBuilder();
 
-    class Q_KNX_EXPORT MacAddress final
+    class MYLIB_EXPORT MacAddress final
     {
     public:
         MacAddress();
@@ -71,7 +71,7 @@ public:
     };
     static QKnxNetIpSrpProxy::MacAddress macAddressBuilder();
 
-    class Q_KNX_EXPORT SupportedFamily final
+    class MYLIB_EXPORT SupportedFamily final
     {
     public:
         SupportedFamily();
@@ -90,7 +90,7 @@ public:
     };
     static QKnxNetIpSrpProxy::SupportedFamily supportedFamilyBuilder();
 
-    class Q_KNX_EXPORT RequestDibs final
+    class MYLIB_EXPORT RequestDibs final
     {
     public:
         RequestDibs();

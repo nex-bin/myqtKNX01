@@ -38,7 +38,7 @@
 
 QT_BEGIN_NAMESPACE
 
-class Q_KNX_EXPORT QKnxControlField final
+class MYLIB_EXPORT QKnxControlField final
 {
     Q_GADGET
 
@@ -133,7 +133,7 @@ public:
     bool operator==(const QKnxControlField &other) const;
     bool operator!=(const QKnxControlField &other) const;
 
-    class Q_KNX_EXPORT Builder
+    class MYLIB_EXPORT Builder
     {
     public:
         Builder &setFrameFormat(QKnxControlField::FrameFormat type);
@@ -158,7 +158,7 @@ public:
 private:
     std::bitset<8> m_ctrl1; // ### Qt6: Replace with quint8
 };
-Q_KNX_EXPORT QDebug operator<<(QDebug debug, const QKnxControlField &ctrl);
+MYLIB_EXPORT QDebug operator<<(QDebug debug, const QKnxControlField &ctrl);
 
 Q_DECLARE_TYPEINFO(QKnxControlField::FrameFormat, Q_PRIMITIVE_TYPE);
 Q_DECLARE_TYPEINFO(QKnxControlField::Repeat, Q_PRIMITIVE_TYPE);

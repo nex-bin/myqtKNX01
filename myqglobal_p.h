@@ -52,7 +52,7 @@
 // We mean it.
 //
 
-#include "qglobal.h"
+// #include "qglobal.h"
 // #include "myqglobal_p.h"      // include self to avoid syncqt warning - no-op
 
 #ifndef QT_BOOTSTRAPPED

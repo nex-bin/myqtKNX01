@@ -35,7 +35,7 @@
 
 QT_BEGIN_NAMESPACE
 
-class Q_KNX_EXPORT QAbstractKnxTime
+class MYLIB_EXPORT QAbstractKnxTime
 {
     Q_GADGET
 
@@ -104,7 +104,7 @@ private:
     DayOfWeek m_day { DayOfWeek::Ignore };
 };
 
-class Q_KNX_EXPORT QKnxTime : public QKnxTimeBase<QKnxTime>
+class MYLIB_EXPORT QKnxTime : public QKnxTimeBase<QKnxTime>
 {
 public:
     QKnxTime() = default;
@@ -116,7 +116,7 @@ public:
     static bool isValid(quint8 h, quint8 m, quint8 s);
 };
 
-class Q_KNX_EXPORT QKnxTime24 : public QKnxTimeBase<QKnxTime24>
+class MYLIB_EXPORT QKnxTime24 : public QKnxTimeBase<QKnxTime24>
 {
 public:
     QKnxTime24() = default;

@@ -38,7 +38,7 @@
 
 QT_BEGIN_NAMESPACE
 
-class Q_KNX_EXPORT QKnxNetIpConnectResponseProxy final
+class MYLIB_EXPORT QKnxNetIpConnectResponseProxy final
 {
 public:
     QKnxNetIpConnectResponseProxy() = delete;
@@ -54,7 +54,7 @@ public:
     QKnxNetIpHpai dataEndpoint() const;
     QKnxNetIpCrd responseData() const;
 
-    class Q_KNX_EXPORT Builder final
+    class MYLIB_EXPORT Builder final
     {
     public:
         Builder &setChannelId(quint8 channelId);

@@ -34,7 +34,7 @@
 
 QT_BEGIN_NAMESPACE
 
-class Q_KNX_EXPORT QKnxSceneNumber : public QKnxFixedSizeDatapointType
+class MYLIB_EXPORT QKnxSceneNumber : public QKnxFixedSizeDatapointType
 {
 public:
     QKnxSceneNumber();
@@ -50,7 +50,7 @@ public:
     bool isValid() const override;
 };
 
-class Q_KNX_EXPORT QKnxSceneControl : public QKnxFixedSizeDatapointType
+class MYLIB_EXPORT QKnxSceneControl : public QKnxFixedSizeDatapointType
 {
     Q_GADGET
 
@@ -79,7 +79,7 @@ public:
     bool setValue(quint8 sceneNumber, Control control);
 };
 
-class Q_KNX_EXPORT QKnxSceneInfo : public QKnxFixedSizeDatapointType
+class MYLIB_EXPORT QKnxSceneInfo : public QKnxFixedSizeDatapointType
 {
     Q_GADGET
 

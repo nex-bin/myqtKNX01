@@ -40,7 +40,7 @@ QT_BEGIN_NAMESPACE
 
 struct QKnxInterfaceObjectPropertyDataTypePrivate;
 
-class Q_KNX_EXPORT QKnxInterfaceObjectPropertyDataType final
+class MYLIB_EXPORT QKnxInterfaceObjectPropertyDataType final
 {
     Q_GADGET
 

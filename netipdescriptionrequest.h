@@ -36,7 +36,7 @@
 
 QT_BEGIN_NAMESPACE
 
-class Q_KNX_EXPORT QKnxNetIpDescriptionRequestProxy final
+class MYLIB_EXPORT QKnxNetIpDescriptionRequestProxy final
 {
 public:
     QKnxNetIpDescriptionRequestProxy() = delete;
@@ -48,7 +48,7 @@ public:
     bool isValid() const;
     QKnxNetIpHpai controlEndpoint() const;
 
-    class Q_KNX_EXPORT Builder final
+    class MYLIB_EXPORT Builder final
     {
     public:
         Builder &setControlEndpoint(const QKnxNetIpHpai &hpai);

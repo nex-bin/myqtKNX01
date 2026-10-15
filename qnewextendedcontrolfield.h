@@ -38,7 +38,7 @@
 
 QT_BEGIN_NAMESPACE
 
-class Q_KNX_EXPORT QKnxExtendedControlField final
+class MYLIB_EXPORT QKnxExtendedControlField final
 {
     Q_GADGET
     // Q_OBJECT
@@ -73,7 +73,7 @@ public:
     bool operator==(const QKnxExtendedControlField &other) const;
     bool operator!=(const QKnxExtendedControlField &other) const;
 
-    class Q_KNX_EXPORT Builder final
+    class MYLIB_EXPORT Builder final
     {
     public:
         Builder &setDestinationAddressType(QKnxAddress::Type address);
@@ -92,7 +92,7 @@ public:
 private:
     std::bitset<8> m_ctrl2; // ### Qt6: Replace with quint8
 };
-Q_KNX_EXPORT QDebug operator<<(QDebug debug, const QKnxExtendedControlField &ctrl);
+MYLIB_EXPORT QDebug operator<<(QDebug debug, const QKnxExtendedControlField &ctrl);
 
 Q_DECLARE_TYPEINFO(QKnxExtendedControlField::ExtendedFrameFormat, Q_PRIMITIVE_TYPE);
 

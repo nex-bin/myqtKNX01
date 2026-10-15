@@ -51,7 +51,7 @@ QT_BEGIN_NAMESPACE
 
 namespace QKnx { namespace Ets { namespace Keyring {
 
-struct Q_KNX_EXPORT QKnxBackbone
+struct MYLIB_EXPORT QKnxBackbone
 {
     Q_DECLARE_TR_FUNCTIONS(QKnxBackbone)
 
@@ -63,7 +63,7 @@ public:
     bool parseElement(QXmlStreamReader *reader, bool pedantic);
 };
 
-struct Q_KNX_EXPORT QKnxInterface
+struct MYLIB_EXPORT QKnxInterface
 {
     Q_DECLARE_TR_FUNCTIONS(QKnxInterface)
 
@@ -76,7 +76,7 @@ public:
     QByteArray Password; // optional, Base64 encoded, pattern [A-Za-z0-9\+/]{42}[AEIMQUYcgkosw048]=
     QByteArray Authentication; // optional, Base64 encoded, pattern [A-Za-z0-9\+/]{42}[AEIMQUYcgkosw048]=
 
-    struct Q_KNX_EXPORT QKnxGroup
+    struct MYLIB_EXPORT QKnxGroup
     {
         Q_DECLARE_TR_FUNCTIONS(QKnxGroup)
 
@@ -91,12 +91,12 @@ public:
     bool parseElement(QXmlStreamReader *reader, bool pedantic);
 };
 
-struct Q_KNX_EXPORT QKnxGroupAddresses
+struct MYLIB_EXPORT QKnxGroupAddresses
 {
     Q_DECLARE_TR_FUNCTIONS(QKnxGroupAddresses)
 
 public:
-    struct Q_KNX_EXPORT QKnxGroup
+    struct MYLIB_EXPORT QKnxGroup
     {
         Q_DECLARE_TR_FUNCTIONS(QKnxGroup)
 
@@ -111,7 +111,7 @@ public:
     bool parseElement(QXmlStreamReader *reader, bool pedantic);
 };
 
-struct Q_KNX_EXPORT QKnxDevice
+struct MYLIB_EXPORT QKnxDevice
 {
     Q_DECLARE_TR_FUNCTIONS(QKnxDevice)
 
@@ -125,7 +125,7 @@ public:
     bool parseElement(QXmlStreamReader *reader, bool pedantic);
 };
 
-struct Q_KNX_EXPORT QKnxDevices
+struct MYLIB_EXPORT QKnxDevices
 {
     Q_DECLARE_TR_FUNCTIONS(QKnxDevices)
 
@@ -134,7 +134,7 @@ public:
     bool parseElement(QXmlStreamReader *reader, bool pedantic);
 };
 
-struct Q_KNX_EXPORT QKnxKeyring
+struct MYLIB_EXPORT QKnxKeyring
 {
     Q_DECLARE_TR_FUNCTIONS(QKnxKeyring)
 

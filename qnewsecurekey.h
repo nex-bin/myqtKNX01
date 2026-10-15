@@ -9,7 +9,7 @@
 QT_BEGIN_NAMESPACE
 
 class QKnxSecureKeyData;
-class Q_KNX_EXPORT QKnxSecureKey final
+class MYLIB_EXPORT QKnxSecureKey final
 {
 public:
     enum class Type : quint8 {

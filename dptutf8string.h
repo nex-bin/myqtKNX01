@@ -35,7 +35,7 @@
 
 QT_BEGIN_NAMESPACE
 
-class Q_KNX_EXPORT QKnxUtf8String : public QKnxVariableSizeDatapointType
+class MYLIB_EXPORT QKnxUtf8String : public QKnxVariableSizeDatapointType
 {
 public:
     QKnxUtf8String();
@@ -55,7 +55,7 @@ protected:
     QKnxUtf8String(int subType, const char *string, int size);
 };
 
-class Q_KNX_EXPORT QKnxUtf8 : public QKnxUtf8String
+class MYLIB_EXPORT QKnxUtf8 : public QKnxUtf8String
 {
 public:
     QKnxUtf8();

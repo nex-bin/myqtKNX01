@@ -35,7 +35,7 @@
 
 QT_BEGIN_NAMESPACE
 
-class Q_KNX_EXPORT QKnx32BitSet : public QKnxFixedSizeDatapointType
+class MYLIB_EXPORT QKnx32BitSet : public QKnxFixedSizeDatapointType
 {
 public:
     QKnx32BitSet();
@@ -51,7 +51,7 @@ protected:
     QKnx32BitSet(int subType, quint32 value);
 };
 
-class Q_KNX_EXPORT QKnxCombinedInfoOnOff : public QKnx32BitSet
+class MYLIB_EXPORT QKnxCombinedInfoOnOff : public QKnx32BitSet
 {
     Q_GADGET
 
@@ -91,7 +91,7 @@ public:
     };
     Q_ENUM(OutputValidity)
 
-    struct Q_KNX_EXPORT OutputInfo
+    struct MYLIB_EXPORT OutputInfo
     {
         OutputInfo(QKnxCombinedInfoOnOff::Output o, QKnxCombinedInfoOnOff::OutputState os,
             QKnxCombinedInfoOnOff::OutputValidity osv)

@@ -10,7 +10,7 @@
 QT_BEGIN_NAMESPACE
 
 class QKnxNetIpServerDiscoveryAgentPrivate;
-class Q_KNX_EXPORT QKnxNetIpServerDiscoveryAgent final : public QObject
+class MYLIB_EXPORT QKnxNetIpServerDiscoveryAgent final : public QObject
 {
     Q_OBJECT
     Q_DISABLE_COPY(QKnxNetIpServerDiscoveryAgent)

@@ -6,7 +6,7 @@
 QT_BEGIN_NAMESPACE
 
 class QKnxNetIpExtendedDeviceDibBuilderPrivate;
-class Q_KNX_EXPORT QKnxNetIpExtendedDeviceDibProxy final
+class MYLIB_EXPORT QKnxNetIpExtendedDeviceDibProxy final
 {
 public:
     QKnxNetIpExtendedDeviceDibProxy() = delete;
@@ -22,7 +22,7 @@ public:
     quint16 maximumLocalApduLength() const;
     quint16 deviceDescriptorType0() const;
 
-    class Q_KNX_EXPORT Builder final
+    class MYLIB_EXPORT Builder final
     {
     public:
         Builder();

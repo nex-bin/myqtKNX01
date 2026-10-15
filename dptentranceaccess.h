@@ -35,7 +35,7 @@
 
 QT_BEGIN_NAMESPACE
 
-class Q_KNX_EXPORT QKnxEntranceAccess : public QKnxFixedSizeDatapointType
+class MYLIB_EXPORT QKnxEntranceAccess : public QKnxFixedSizeDatapointType
 {
     Q_GADGET
 

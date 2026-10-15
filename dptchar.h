@@ -34,7 +34,7 @@
 
 QT_BEGIN_NAMESPACE
 
-class Q_KNX_EXPORT QKnxChar : public QKnxFixedSizeDatapointType
+class MYLIB_EXPORT QKnxChar : public QKnxFixedSizeDatapointType
 {
 public:
     QKnxChar();
@@ -52,7 +52,7 @@ protected:
     QKnxChar(int subType, unsigned char value);
 };
 
-class Q_KNX_EXPORT QKnxCharASCII : public QKnxChar
+class MYLIB_EXPORT QKnxCharASCII : public QKnxChar
 {
 public:
     QKnxCharASCII();
@@ -64,7 +64,7 @@ public:
     bool setCharacter(char value);
 };
 
-class Q_KNX_EXPORT QKnxChar88591 : public QKnxChar
+class MYLIB_EXPORT QKnxChar88591 : public QKnxChar
 {
 public:
     QKnxChar88591();

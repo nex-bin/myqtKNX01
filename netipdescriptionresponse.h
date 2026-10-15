@@ -38,7 +38,7 @@
 
 QT_BEGIN_NAMESPACE
 
-class Q_KNX_EXPORT QKnxNetIpDescriptionResponseProxy final
+class MYLIB_EXPORT QKnxNetIpDescriptionResponseProxy final
 {
 public:
     QKnxNetIpDescriptionResponseProxy() = delete;
@@ -53,7 +53,7 @@ public:
     QKnxNetIpDib supportedFamilies() const;
     QVector<QKnxNetIpDib> optionalDibs() const;
 
-    class Q_KNX_EXPORT Builder final
+    class MYLIB_EXPORT Builder final
     {
     public:
         Builder &setDeviceHardware(const QKnxNetIpDib &ddib);

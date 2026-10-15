@@ -34,7 +34,7 @@
 
 QT_BEGIN_NAMESPACE
 
-class Q_KNX_EXPORT QKnx8BitUnsignedValue : public QKnxFixedSizeDatapointType
+class MYLIB_EXPORT QKnx8BitUnsignedValue : public QKnxFixedSizeDatapointType
 {
     Q_GADGET
 
@@ -52,7 +52,7 @@ protected:
     QKnx8BitUnsignedValue(int subType, double value);
 };
 
-class Q_KNX_EXPORT QKnxTariff : public QKnx8BitUnsignedValue
+class MYLIB_EXPORT QKnxTariff : public QKnx8BitUnsignedValue
 {
 public:
     QKnxTariff();
@@ -63,7 +63,7 @@ public:
 };
 
 #define CREATE_CLASS_DECLARATION(CLASS, SUB_TYPE) \
-class Q_KNX_EXPORT CLASS : public QKnx8BitUnsignedValue \
+class MYLIB_EXPORT CLASS : public QKnx8BitUnsignedValue \
 { \
 public: \
     CLASS(); \

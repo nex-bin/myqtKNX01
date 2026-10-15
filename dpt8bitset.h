@@ -34,7 +34,7 @@
 
 QT_BEGIN_NAMESPACE
 
-class Q_KNX_EXPORT QKnx8BitSet : public QKnxFixedSizeDatapointType
+class MYLIB_EXPORT QKnx8BitSet : public QKnxFixedSizeDatapointType
 {
     Q_GADGET
 
@@ -57,7 +57,7 @@ protected:
     QKnx8BitSet(int subType, quint8 value);
 };
 
-class Q_KNX_EXPORT QKnxGeneralStatus : public QKnx8BitSet
+class MYLIB_EXPORT QKnxGeneralStatus : public QKnx8BitSet
 {
     Q_GADGET
 
@@ -92,7 +92,7 @@ public:
 
 
 
-class Q_KNX_EXPORT QKnxDeviceControl : public QKnx8BitSet
+class MYLIB_EXPORT QKnxDeviceControl : public QKnx8BitSet
 {
     Q_GADGET
 

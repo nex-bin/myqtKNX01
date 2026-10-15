@@ -41,19 +41,18 @@ MainWindow::MainWindow(QWidget *parent)
     , ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
+    setWindowTitle("KNXSend");
 
-    QThread *networkThread = new QThread(this);
+    networkThread = new QThread(this);
     worker = new myKNXnetwork();
 
     // 【核心步骤】将 Worker 移动到子线程
     worker->moveToThread(networkThread);
 
 
-    connect(networkThread, &QThread::started, worker, &myKNXnetwork::getNetworkInfo);
+    connect(networkThread, &QThread::started, worker, &myKNXnetwork::onNetworkInfo);
     // 清理：销毁线程时回收 Worker
     connect(networkThread, &QThread::finished, worker, &QObject::deleteLater);
-
-    // connect(this, &MainWindow::sendConnectRequest, worker, &myKNXnetwork::getNetworkInfo);
 
     networkThread->start();
 
@@ -78,13 +77,30 @@ void MainWindow::init(){
     userpage * userpageWidget = new userpage(centralWid);
     usermainpage * usermainpageWidget = new usermainpage(centralWid);
 
-    // connect(userfaceWidget,&userface::sendConnectRequest,worker, &myKNXnetwork::getNetworkInfo);
     connect(userpageWidget,&userpage::turnToMainpage,this,&MainWindow::toUserMainpageWidget);
     connect(usermainpageWidget,&usermainpage::turnTopage,this,&MainWindow::toUserpageWidget);
-    connect(userinterfaceWidget,&userface::askLocalIpaddress,worker,&myKNXnetwork::getNetworkInfo);
 
-    connect(userinterfaceWidget,&userface::fleshport,worker,&myKNXnetwork::getNetworkInfo);
-    connect(worker,&myKNXnetwork::resLocalIpaddress,userinterfaceWidget,&userface::resLocalIpaddress,Qt::QueuedConnection);
+    connect(userinterfaceWidget,&userface::sigLocalIpaddress,worker,&myKNXnetwork::onNetworkInfo);
+    connect(userinterfaceWidget,&userface::sigfleshport,worker,&myKNXnetwork::onNetworkInfo);
+    connect(worker,&myKNXnetwork::sigLocalIpaddress,userinterfaceWidget,&userface::onLocalIpaddress,Qt::QueuedConnection);
+
+    connect(userinterfaceWidget,&userface::sigsearchrequest,worker,&myKNXnetwork::onsearchrequest);
+    connect(worker,&myKNXnetwork::sigfindedDeviceInfo,userinterfaceWidget,&userface::onFindedDeviceInfo);
+
+    connect(userinterfaceWidget,&userface::sigdescriptionrequest,worker,&myKNXnetwork::ondescriptionrequest);
+    connect(worker,&myKNXnetwork::sigDetailInfo,userinterfaceWidget,&userface::onDeviceDetailInfo);
+
+    connect(userinterfaceWidget,&userface::sigconnectrequest,worker,&myKNXnetwork::onconnectrequest);
+    connect(worker,&myKNXnetwork::sigconnectInfo,userinterfaceWidget,&userface::onconnectInfo);
+
+    connect(userinterfaceWidget,&userface::sigdisconnect,worker,&myKNXnetwork::ondisconnectrequest);
+
+    connect(worker,&myKNXnetwork::sigstate,userinterfaceWidget,&userface::onConnectState);
+
+    connect(worker,&myKNXnetwork::sigValueSendState,userinterfaceWidget,&userface::onValueSendState);
+    connect(userinterfaceWidget,&userface::sigsendvalue,worker,&myKNXnetwork::tunnelRequest);
+
+    connect(userpageWidget,&userpage::KNXValueSend,worker,&myKNXnetwork::tunnelRequest);
 
 
     int userfaceIndex = mainStackedWidget->addWidget(userinterfaceWidget);
@@ -117,8 +133,14 @@ void MainWindow::toUserpageWidget(){
 }
 void MainWindow::closeEvent(QCloseEvent *event)
 {
+    qDebug() << "networkThread:" << networkThread;
     // 假设你的 QThread 指针是 m_thread
     if (networkThread && networkThread->isRunning()) {
+        qDebug()<<"正在执行退出清理程序...........";
+        // 方式一：阻塞等待清理完成（推荐，确保清理干净）
+        QMetaObject::invokeMethod(worker, "m_cleanup", Qt::BlockingQueuedConnection);
+
+
         // 1. 请求线程退出事件循环
         networkThread->quit();
         // 2. 请求线程中断当前阻塞的操作（如果你的 run() 里有循环）
@@ -126,6 +148,7 @@ void MainWindow::closeEvent(QCloseEvent *event)
         // 3. 阻塞主线程，等待子线程真正运行结束（最多等3秒）
         if (!networkThread->wait(3000)) {
             // 如果3秒后还没结束，只能强制终止（不推荐，但能兜底）
+            qWarning() << "线程未能在 3 秒内退出，强制终止";
             networkThread->terminate();
             networkThread->wait();
         }

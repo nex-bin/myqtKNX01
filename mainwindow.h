@@ -8,6 +8,9 @@
 #include <myKNXnetwork.h>
 #include <netipservicediscoveryagent_p.h>
 
+#include <QLockFile>
+#include <QDir>
+
 QT_BEGIN_NAMESPACE
 namespace Ui {
 class MainWindow;
@@ -28,7 +31,7 @@ public:
     void toUserMainpageWidget();
     QThread *networkThread;
     QStackedWidget * mainStackedWidget;
-    myKNXnetwork *worker;
+
 protected:
     void closeEvent(QCloseEvent *event) override;
 
@@ -36,5 +39,6 @@ signals:
     void sendConnectRequest();
 private:
     Ui::MainWindow *ui;
+    myKNXnetwork *worker;
 };
 #endif // MAINWINDOW_H

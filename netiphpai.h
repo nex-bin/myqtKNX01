@@ -6,7 +6,7 @@
 
 QT_BEGIN_NAMESPACE
 
-class Q_KNX_EXPORT QKnxNetIpHpaiProxy final
+class MYLIB_EXPORT QKnxNetIpHpaiProxy final
 {
 public:
     QKnxNetIpHpaiProxy() = delete;
@@ -21,7 +21,7 @@ public:
     QHostAddress hostAddress() const;
     quint16 port() const;
 
-    class Q_KNX_EXPORT Builder final
+    class MYLIB_EXPORT Builder final
     {
     public:
         Builder &setHostProtocol(QKnxNetIp::HostProtocol code);

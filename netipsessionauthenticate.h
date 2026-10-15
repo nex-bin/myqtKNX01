@@ -36,7 +36,7 @@
 QT_BEGIN_NAMESPACE
 
 class QKnxNetIpSessionAuthenticateBuilderPrivate;
-class Q_KNX_EXPORT QKnxNetIpSessionAuthenticateProxy final
+class MYLIB_EXPORT QKnxNetIpSessionAuthenticateProxy final
 {
 public:
     QKnxNetIpSessionAuthenticateProxy() = delete;
@@ -50,7 +50,7 @@ public:
     QKnxNetIp::SecureUserId userId() const;
     QKnxByteArray messageAuthenticationCode() const;
 
-    class Q_KNX_EXPORT Builder final
+    class MYLIB_EXPORT Builder final
     {
     public:
         Builder();
@@ -69,7 +69,7 @@ public:
     };
     static QKnxNetIpSessionAuthenticateProxy::Builder builder();
 
-    class Q_KNX_EXPORT SecureBuilder final
+    class MYLIB_EXPORT SecureBuilder final
     {
     public:
         SecureBuilder();

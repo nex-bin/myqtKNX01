@@ -39,7 +39,7 @@
 QT_BEGIN_NAMESPACE
 
 class QKnxFeatureBuilderPrivate;
-class Q_KNX_EXPORT QKnxNetIpTunnelingFeatureResponseProxy final
+class MYLIB_EXPORT QKnxNetIpTunnelingFeatureResponseProxy final
 {
 public:
     QKnxNetIpTunnelingFeatureResponseProxy() = delete;
@@ -56,7 +56,7 @@ public:
     QKnx::ReturnCode returnCode() const;
     QKnxByteArray featureValue() const;
 
-    class Q_KNX_EXPORT Builder final
+    class MYLIB_EXPORT Builder final
     {
     public:
         Builder();

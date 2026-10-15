@@ -34,7 +34,7 @@
 
 QT_BEGIN_NAMESPACE
 
-class Q_KNX_EXPORT QKnx1Bit : public QKnxFixedSizeDatapointType
+class MYLIB_EXPORT QKnx1Bit : public QKnxFixedSizeDatapointType
 {
 public:
     QKnx1Bit();
@@ -53,7 +53,7 @@ protected:
 };
 
 #define CREATE_CLASS_DECLARATION(CLASS, SUB_TYPE, STATE_1, STATE_2) \
-class Q_KNX_EXPORT CLASS : public QKnx1Bit \
+class MYLIB_EXPORT CLASS : public QKnx1Bit \
 { \
         Q_GADGET \
 \

@@ -36,7 +36,7 @@
 
 QT_BEGIN_NAMESPACE
 
-class Q_KNX_EXPORT QKnxNetIpConnectionStateResponseProxy final
+class MYLIB_EXPORT QKnxNetIpConnectionStateResponseProxy final
 {
 public:
     QKnxNetIpConnectionStateResponseProxy() = delete;
@@ -50,7 +50,7 @@ public:
     quint8 channelId() const;
     QKnxNetIp::Error status() const;
 
-    class Q_KNX_EXPORT Builder final
+    class MYLIB_EXPORT Builder final
     {
     public:
         Builder &setChannelId(quint8 channelId);

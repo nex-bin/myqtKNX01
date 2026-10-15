@@ -7,7 +7,7 @@
 
 QT_BEGIN_NAMESPACE
 
-class Q_KNX_EXPORT QKnxNetIpConnectRequestProxy final
+class MYLIB_EXPORT QKnxNetIpConnectRequestProxy final
 {
 public:
     QKnxNetIpConnectRequestProxy() = delete;
@@ -22,7 +22,7 @@ public:
     QKnxNetIpHpai dataEndpoint() const;
     QKnxNetIpCri requestInformation() const;
 
-    class Q_KNX_EXPORT Builder final
+    class MYLIB_EXPORT Builder final
     {
     public:
         Builder &setControlEndpoint(const QKnxNetIpHpai &hpai);

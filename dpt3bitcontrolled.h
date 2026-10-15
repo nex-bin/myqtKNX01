@@ -34,7 +34,7 @@
 
 QT_BEGIN_NAMESPACE
 
-class Q_KNX_EXPORT QKnx3BitControlled : public QKnxFixedSizeDatapointType
+class MYLIB_EXPORT QKnx3BitControlled : public QKnxFixedSizeDatapointType
 {
     Q_GADGET
 
@@ -69,7 +69,7 @@ protected:
     explicit QKnx3BitControlled(int subType, bool control, NumberOfIntervals n);
 };
 
-class Q_KNX_EXPORT QKnxControlDimming : public QKnx3BitControlled
+class MYLIB_EXPORT QKnxControlDimming : public QKnx3BitControlled
 {
     Q_GADGET
 
@@ -90,7 +90,7 @@ public:
     void setControl(Control control);
 };
 
-class Q_KNX_EXPORT QKnxControlBlinds : public QKnx3BitControlled
+class MYLIB_EXPORT QKnxControlBlinds : public QKnx3BitControlled
 {
     Q_GADGET
 

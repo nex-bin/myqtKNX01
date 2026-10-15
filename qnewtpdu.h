@@ -38,7 +38,7 @@
 QT_BEGIN_NAMESPACE
 
 class QKnxTpduPrivate;
-class Q_KNX_EXPORT QKnxTpdu final
+class MYLIB_EXPORT QKnxTpdu final
 {
     Q_GADGET
 
@@ -213,7 +213,7 @@ private:
     QKnxTpdu(const QKnxByteArray &data);
     QSharedDataPointer<QKnxTpduPrivate> d_ptr;
 };
-Q_KNX_EXPORT QDebug operator<<(QDebug debug, const QKnxTpdu &tpdu);
+MYLIB_EXPORT QDebug operator<<(QDebug debug, const QKnxTpdu &tpdu);
 
 Q_DECLARE_TYPEINFO(QKnxTpdu::ErrorCode, Q_PRIMITIVE_TYPE);
 Q_DECLARE_TYPEINFO(QKnxTpdu::ResetType, Q_PRIMITIVE_TYPE);

@@ -39,7 +39,7 @@
 QT_BEGIN_NAMESPACE
 
 class QKnxNetIpSecureConfigurationPrivate;
-class Q_KNX_EXPORT QKnxNetIpSecureConfiguration
+class MYLIB_EXPORT QKnxNetIpSecureConfiguration
 {
 public:
     enum class Type : quint8

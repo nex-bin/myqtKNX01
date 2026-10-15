@@ -41,7 +41,7 @@
 
 QT_BEGIN_NAMESPACE
 
-class Q_KNX_EXPORT QKnxLinkLayerFrame::Builder final
+class MYLIB_EXPORT QKnxLinkLayerFrame::Builder final
 {
 public:
     Builder() = default;

@@ -41,7 +41,7 @@
 QT_BEGIN_NAMESPACE
 
 class QKnxLinkLayerFramePrivate;
-class Q_KNX_EXPORT QKnxLinkLayerFrame final
+class MYLIB_EXPORT QKnxLinkLayerFrame final
 {
     Q_GADGET
 
@@ -131,14 +131,14 @@ public:
     bool operator==(const QKnxLinkLayerFrame &other) const;
     bool operator!=(const QKnxLinkLayerFrame &other) const;
 
-    class Q_KNX_EXPORT Builder;
+    class MYLIB_EXPORT Builder;
     static QKnxLinkLayerFrame::Builder builder();
 
 private:
     bool isMessageCodeValid() const;
     QSharedDataPointer<QKnxLinkLayerFramePrivate> d_ptr;
 };
-Q_KNX_EXPORT QDebug operator<<(QDebug debug, const QKnxLinkLayerFrame &frame);
+MYLIB_EXPORT QDebug operator<<(QDebug debug, const QKnxLinkLayerFrame &frame);
 
 QT_END_NAMESPACE
 

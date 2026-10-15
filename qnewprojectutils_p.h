@@ -7,7 +7,7 @@
 
 QT_BEGIN_NAMESPACE
 
-struct Q_KNX_EXPORT QKnxProjectUtils final
+struct MYLIB_EXPORT QKnxProjectUtils final
 {
     Q_DECLARE_TR_FUNCTIONS(QKnxProjectUtils)
 

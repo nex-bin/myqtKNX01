@@ -34,7 +34,7 @@
 
 QT_BEGIN_NAMESPACE
 
-class Q_KNX_EXPORT QKnxElectricalEnergy : public QKnxFixedSizeDatapointType
+class MYLIB_EXPORT QKnxElectricalEnergy : public QKnxFixedSizeDatapointType
 {
 public:
     QKnxElectricalEnergy();
@@ -53,7 +53,7 @@ protected:
 };
 
 #define CREATE_CLASS_DECLARATION(CLASS, SUB_TYPE) \
-class Q_KNX_EXPORT CLASS : public QKnxElectricalEnergy \
+class MYLIB_EXPORT CLASS : public QKnxElectricalEnergy \
 { \
     public: \
     CLASS(); \

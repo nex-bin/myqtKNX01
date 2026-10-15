@@ -49,7 +49,7 @@
 
 QT_BEGIN_NAMESPACE
 
-struct Q_KNX_EXPORT QKnxDatapointTypePrivate : public QSharedData
+struct MYLIB_EXPORT QKnxDatapointTypePrivate : public QSharedData
 {
     QKnxDatapointTypePrivate() = default;
     ~QKnxDatapointTypePrivate() = default;

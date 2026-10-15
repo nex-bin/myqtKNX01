@@ -6,7 +6,7 @@
 
 QT_BEGIN_NAMESPACE
 
-class Q_KNX_EXPORT QKnxNetIpCriProxy final
+class MYLIB_EXPORT QKnxNetIpCriProxy final
 {
 public:
     QKnxNetIpCriProxy() = delete;
@@ -23,7 +23,7 @@ public:
     QKnxAddress individualAddress() const;
     QKnxByteArray additionalData() const;
 
-    class Q_KNX_EXPORT Builder final
+    class MYLIB_EXPORT Builder final
     {
     public:
         Builder &setConnectionType(QKnxNetIp::ConnectionType type);

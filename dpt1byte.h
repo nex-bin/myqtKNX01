@@ -32,9 +32,10 @@
 
 #include <dptdatapointtype.h>
 
+#include "mylib_global.h"
 QT_BEGIN_NAMESPACE
 
-class Q_KNX_EXPORT QKnx1Byte : public QKnxFixedSizeDatapointType
+class MYLIB_EXPORT QKnx1Byte : public QKnxFixedSizeDatapointType
 {
 
 public:
@@ -53,7 +54,7 @@ protected:
     explicit QKnx1Byte(int subType, quint8 value);
 };
 
-class Q_KNX_EXPORT QKnxScloMode : public QKnx1Byte
+class MYLIB_EXPORT QKnxScloMode : public QKnx1Byte
 {
     Q_GADGET
 
@@ -76,7 +77,7 @@ public:
     bool setMode(Mode mode);
 };
 
-class Q_KNX_EXPORT QKnxBuildingMode : public QKnx1Byte
+class MYLIB_EXPORT QKnxBuildingMode : public QKnx1Byte
 {
     Q_GADGET
 
@@ -99,7 +100,7 @@ public:
     bool setMode(Mode mode);
 };
 
-class Q_KNX_EXPORT QKnxOccupyMode : public QKnx1Byte
+class MYLIB_EXPORT QKnxOccupyMode : public QKnx1Byte
 {
     Q_GADGET
 
@@ -122,7 +123,7 @@ public:
     bool setMode(Mode mode);
 };
 
-class Q_KNX_EXPORT QKnxPriority : public QKnx1Byte
+class MYLIB_EXPORT QKnxPriority : public QKnx1Byte
 {
     Q_GADGET
 
@@ -146,7 +147,7 @@ public:
     bool setPriority(Priority mode);
 };
 
-class Q_KNX_EXPORT QKnxLightApplicationMode : public QKnx1Byte
+class MYLIB_EXPORT QKnxLightApplicationMode : public QKnx1Byte
 {
     Q_GADGET
 
@@ -169,7 +170,7 @@ public:
     bool setMode(Mode mode);
 };
 
-class Q_KNX_EXPORT QKnxApplicationArea : public QKnx1Byte
+class MYLIB_EXPORT QKnxApplicationArea : public QKnx1Byte
 {
     Q_GADGET
 
@@ -202,7 +203,7 @@ public:
     bool isValid() const override;
 };
 
-class Q_KNX_EXPORT QKnxAlarmClassType : public QKnx1Byte
+class MYLIB_EXPORT QKnxAlarmClassType : public QKnx1Byte
 {
     Q_GADGET
 
@@ -225,7 +226,7 @@ public:
     bool setType(Type type);
 };
 
-class Q_KNX_EXPORT QKnxPsuMode : public QKnx1Byte
+class MYLIB_EXPORT QKnxPsuMode : public QKnx1Byte
 {
     Q_GADGET
 
@@ -248,7 +249,7 @@ public:
     bool setMode(Mode mode);
 };
 
-class Q_KNX_EXPORT QKnxErrorClassSystem : public QKnx1Byte
+class MYLIB_EXPORT QKnxErrorClassSystem : public QKnx1Byte
 {
     Q_GADGET
 
@@ -287,7 +288,7 @@ public:
     bool setError(Error error);
 };
 
-class Q_KNX_EXPORT QKnxErrorClassHvac : public QKnx1Byte
+class MYLIB_EXPORT QKnxErrorClassHvac : public QKnx1Byte
 {
     Q_GADGET
 
@@ -312,7 +313,7 @@ public:
     bool setError(Error error);
 };
 
-class Q_KNX_EXPORT QKnxTimeDelay : public QKnx1Byte
+class MYLIB_EXPORT QKnxTimeDelay : public QKnx1Byte
 {
     Q_GADGET
 
@@ -358,7 +359,7 @@ public:
     bool setDelay(Delay delay);
 };
 
-class Q_KNX_EXPORT QKnxBeaufortWindForceScale : public QKnx1Byte
+class MYLIB_EXPORT QKnxBeaufortWindForceScale : public QKnx1Byte
 {
     Q_GADGET
 
@@ -391,7 +392,7 @@ public:
     bool setForce(Force force);
 };
 
-class Q_KNX_EXPORT QKnxSensorSelect : public QKnx1Byte
+class MYLIB_EXPORT QKnxSensorSelect : public QKnx1Byte
 {
     Q_GADGET
 
@@ -416,7 +417,7 @@ public:
     bool setMode(Mode mode);
 };
 
-class Q_KNX_EXPORT QKnxActuatorConnectType : public QKnx1Byte
+class MYLIB_EXPORT QKnxActuatorConnectType : public QKnx1Byte
 {
     Q_GADGET
 
@@ -438,7 +439,7 @@ public:
     bool setType(Type type);
 };
 
-class Q_KNX_EXPORT QKnxCloudCover : public QKnx1Byte
+class MYLIB_EXPORT QKnxCloudCover : public QKnx1Byte
 {
     Q_GADGET
 

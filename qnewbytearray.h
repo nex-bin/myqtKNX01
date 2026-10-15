@@ -4,13 +4,13 @@
 // #include <qbytearray.h>
 #include <qdebug.h>
 
-// #include <qmyknxglobal.h>
+#include <qmyknx.h>
 
 #include <initializer_list>
 
 QT_BEGIN_NAMESPACE
 
-class QKnxByteArray
+class MYLIB_EXPORT QKnxByteArray
 {
 public:
     inline QKnxByteArray() = default;

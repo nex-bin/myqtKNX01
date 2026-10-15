@@ -41,7 +41,7 @@
 QT_BEGIN_NAMESPACE
 
 class QKnxNetIpEndpointConnectionPrivate;
-class Q_KNX_EXPORT QKnxNetIpEndpointConnection : public QObject
+class MYLIB_EXPORT QKnxNetIpEndpointConnection : public QObject
 {
     Q_OBJECT
     Q_DISABLE_COPY(QKnxNetIpEndpointConnection)

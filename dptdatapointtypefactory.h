@@ -34,7 +34,7 @@
 
 QT_BEGIN_NAMESPACE
 
-class Q_KNX_EXPORT QKnxDatapointTypeFactory
+class MYLIB_EXPORT QKnxDatapointTypeFactory
 {
 public:
     using FactoryFunction = QKnxDatapointType *(*)();

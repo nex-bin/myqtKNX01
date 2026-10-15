@@ -38,7 +38,7 @@
 
 QT_BEGIN_NAMESPACE
 
-class Q_KNX_EXPORT QKnxAdditionalInfo final
+class MYLIB_EXPORT QKnxAdditionalInfo final
 {
     Q_GADGET
 
@@ -90,7 +90,7 @@ public:
 private:
     QKnxByteArray m_bytes { 0x00, 0x00 };
 };
-Q_KNX_EXPORT QDebug operator<<(QDebug debug, const QKnxAdditionalInfo &info);
+MYLIB_EXPORT QDebug operator<<(QDebug debug, const QKnxAdditionalInfo &info);
 
 Q_DECLARE_TYPEINFO(QKnxAdditionalInfo::Type, Q_PRIMITIVE_TYPE);
 

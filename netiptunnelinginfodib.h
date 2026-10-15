@@ -8,7 +8,7 @@
 QT_BEGIN_NAMESPACE
 
 class QKnxNetIpTunnelingSlotInfoPrivate;
-class Q_KNX_EXPORT QKnxNetIpTunnelingSlotInfo final
+class MYLIB_EXPORT QKnxNetIpTunnelingSlotInfo final
 {
     Q_GADGET
 
@@ -59,7 +59,7 @@ private:
 Q_DECLARE_OPERATORS_FOR_FLAGS(QKnxNetIpTunnelingSlotInfo::Status)
 
 class QKnxNetIpTunnelingInfoDibPrivate;
-class Q_KNX_EXPORT QKnxNetIpTunnelingInfoDibProxy final
+class MYLIB_EXPORT QKnxNetIpTunnelingInfoDibProxy final
 {
 public:
     QKnxNetIpTunnelingInfoDibProxy() = delete;
@@ -76,7 +76,7 @@ public:
     QKnxNetIpTunnelingSlotInfo tunnelingSlotInfo() const;
     QVector<QKnxNetIpTunnelingSlotInfo> optionalSlotInfos() const;
 
-    class Q_KNX_EXPORT Builder final
+    class MYLIB_EXPORT Builder final
     {
     public:
         Builder();

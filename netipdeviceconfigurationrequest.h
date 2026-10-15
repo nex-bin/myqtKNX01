@@ -37,7 +37,7 @@
 
 QT_BEGIN_NAMESPACE
 
-class Q_KNX_EXPORT QKnxNetIpDeviceConfigurationRequestProxy final
+class MYLIB_EXPORT QKnxNetIpDeviceConfigurationRequestProxy final
 {
 public:
     QKnxNetIpDeviceConfigurationRequestProxy() = delete;
@@ -52,7 +52,7 @@ public:
     quint8 sequenceNumber() const;
     QKnxDeviceManagementFrame cemi() const;
 
-    class Q_KNX_EXPORT Builder final
+    class MYLIB_EXPORT Builder final
     {
     public:
         Builder &setChannelId(quint8 channelId);

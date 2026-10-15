@@ -1,6 +1,7 @@
 #ifndef QMYKNX_H
 #define QMYKNX_H
 
+
 #ifndef QT_STATIC
 /*
  * 如果定义了QT_BUILD_KNX_LIB，就会通过Q_KNX_EXPORT来说明，Q_DECL_IMPORT来说明函数从外部库导入。
@@ -17,10 +18,6 @@
 // #  define Q_KNX_EXPORT Q_DECL_EXPORT
 // #endif
 
-#define Q_KNX_EXPORT   // 定义为空
-#else
-#  define Q_KNX_EXPORT Q_DECL_EXPORT
-#endif
 
 typedef signed char qint8;         /* 8 bit signed */
 typedef unsigned char quint8;      /* 8 bit unsigned */
@@ -39,4 +36,17 @@ typedef quint64 qulonglong;
 using quint48 = quint64;
 #define Q_UINT48_MAX Q_UINT64_C(281474976710655)
 
+#ifdef my_KNX_STATIC
+#  define MYLIB_EXPORT
+#else
+#if defined(QT_BUILD_KNX_LIB)
+#  define MYLIB_EXPORT Q_DECL_EXPORT
+#else
+#  define MYLIB_EXPORT Q_DECL_IMPORT
+#endif
+
+
+
 #endif // QMYKNX_H
+#endif
+#endif

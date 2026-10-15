@@ -11,7 +11,7 @@
 
 QT_BEGIN_NAMESPACE
 
-class QKnxFeatureBuilderPrivate : public QSharedData
+class MYLIB_EXPORT QKnxFeatureBuilderPrivate : public QSharedData
 {
 public:
     QKnxFeatureBuilderPrivate() = default;
@@ -28,13 +28,13 @@ public:
     QKnxByteArray m_featureValue;
 };
 
-class QKnxNetIpSrpProxy::ProgrammingModePrivate : public QSharedData
+class MYLIB_EXPORT QKnxNetIpSrpProxy::ProgrammingModePrivate : public QSharedData
 {
 public:
     bool m_mandatory { true };
 };
 
-class QKnxNetIpSrpProxy::MacAddressPrivate : public QSharedData
+class MYLIB_EXPORT QKnxNetIpSrpProxy::MacAddressPrivate : public QSharedData
 {
 public:
     QKnxByteArray m_macAddress;

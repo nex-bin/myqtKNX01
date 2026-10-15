@@ -13,7 +13,7 @@
 
 QT_BEGIN_NAMESPACE
 
-struct Q_KNX_EXPORT QKnxNetIpServerInfoPrivate final : public QSharedData
+struct MYLIB_EXPORT QKnxNetIpServerInfoPrivate final : public QSharedData
 {
     QKnxNetIpServerInfoPrivate() = default;
     ~QKnxNetIpServerInfoPrivate() = default;

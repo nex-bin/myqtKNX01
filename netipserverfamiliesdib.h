@@ -6,7 +6,7 @@
 
 QT_BEGIN_NAMESPACE
 
-struct Q_KNX_EXPORT QKnxServiceInfo
+struct MYLIB_EXPORT QKnxServiceInfo
 {
     QKnxNetIp::ServiceFamily ServiceFamily;
     quint8 ServiceFamilyVersion;
@@ -15,7 +15,7 @@ struct Q_KNX_EXPORT QKnxServiceInfo
     bool operator!=(const QKnxServiceInfo &other) const;
 };
 
-class Q_KNX_EXPORT QKnxNetIpServiceFamiliesDibProxy final
+class MYLIB_EXPORT QKnxNetIpServiceFamiliesDibProxy final
 {
 public:
     QKnxNetIpServiceFamiliesDibProxy() = delete;
@@ -29,7 +29,7 @@ public:
     QKnxNetIp::DescriptionType descriptionType() const;
     QVector<QKnxServiceInfo> serviceInfos() const;
 
-    class Q_KNX_EXPORT Builder final
+    class MYLIB_EXPORT Builder final
     {
     public:
         Builder &setServiceInfos(const QVector<QKnxServiceInfo> &infos);

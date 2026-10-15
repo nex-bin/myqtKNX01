@@ -39,7 +39,7 @@
 QT_BEGIN_NAMESPACE
 
 class QKnxFeatureBuilderPrivate;
-class Q_KNX_EXPORT QKnxNetIpTunnelingFeatureSetProxy final
+class MYLIB_EXPORT QKnxNetIpTunnelingFeatureSetProxy final
 {
 public:
     QKnxNetIpTunnelingFeatureSetProxy() = delete;
@@ -55,7 +55,7 @@ public:
     QKnx::InterfaceFeature featureIdentifier() const;
     QKnxByteArray featureValue() const;
 
-    class Q_KNX_EXPORT Builder final
+    class MYLIB_EXPORT Builder final
     {
     public:
         Builder();

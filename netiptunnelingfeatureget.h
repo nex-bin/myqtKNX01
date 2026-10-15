@@ -38,7 +38,7 @@
 QT_BEGIN_NAMESPACE
 
 class QKnxFeatureBuilderPrivate;
-class Q_KNX_EXPORT QKnxNetIpTunnelingFeatureGetProxy final
+class MYLIB_EXPORT QKnxNetIpTunnelingFeatureGetProxy final
 {
 public:
     QKnxNetIpTunnelingFeatureGetProxy() = delete;
@@ -53,7 +53,7 @@ public:
     quint8 sequenceNumber() const;
     QKnx::InterfaceFeature featureIdentifier() const;
 
-    class Q_KNX_EXPORT Builder final
+    class MYLIB_EXPORT Builder final
     {
     public:
         Builder();
