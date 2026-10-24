@@ -82,6 +82,7 @@ SOURCES += \
     netiptunnelingfeatureset.cpp \
     netiptunnelinginfodib.cpp \
     netiptunnelingrequest.cpp \
+    pendingackmanager.cpp \
     qnewaddress.cpp \
     qnewaddtionalinfo.cpp \
     qnewbytearray.cpp \
@@ -190,6 +191,7 @@ HEADERS += \
     netiptunnelingfeatureset.h \
     netiptunnelinginfodib.h \
     netiptunnelingrequest.h \
+    pendingackmanager.h \
     qmyknx.h \
     qnewaddress.h \
     qnewaddtionalinfo.h \
@@ -232,12 +234,12 @@ INCLUDEPATH += $$PWD/../breakpad/qBreakpad/handler/singletone
 LIBS += -L$$PWD/../breakpad/qBreakpad/handler  -lqBreakpad
 
 # 静态编译
-DEFINES += my_KNX_STATIC
+# DEFINES += my_KNX_STATIC
 
 # 动态编译
-# DEFINES += QT_BUILD_KNX_LIB
-# TEMPLATE = lib
-# CONFIG += shared
+DEFINES += QT_BUILD_KNX_LIB
+TEMPLATE = lib
+CONFIG += shared
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin
@@ -256,11 +258,6 @@ CONFIG(debug, debug|release) {
 QMAKE_CXXFLAGS_RELEASE = $$QMAKE_CFLAGS_RELEASE_WITH_DEBUGINFO
 QMAKE_LFLAGS_RELEASE = $$QMAKE_LFLAGS_RELEASE_WITH_DEBUGINFO
 
-#动态链接库文件生成 需要
-# TEMPLATE = lib
-# CONFIG += shared
-# TARGET = MyLib
-# DEFINES += MYLIB_LIBRARY
 
 RC_ICONS = cookie.ico
 

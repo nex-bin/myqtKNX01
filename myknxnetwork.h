@@ -22,6 +22,8 @@
 
 #include <netiptunnelingacknowledge.h>
 
+#include "pendingackmanager.h"
+
 class MYLIB_EXPORT myKNXnetwork : public QObject
 {
     Q_OBJECT
@@ -29,7 +31,7 @@ public:
 
 
     explicit myKNXnetwork(QObject * parent = nullptr);
-
+    ~myKNXnetwork();
     void cleanup();
 
     void searchrequest_ontime();
@@ -52,8 +54,8 @@ public:
     void onsearchrequest(QString IP);
     void onsearchrequestextend(QString IP);
 
-    void onconnectrequest(ips);
-    void ondescriptionrequest(ips);
+    void onconnectrequest(QList<QString> ipandlocalip);
+    void ondescriptionrequest(QList<QString> ipandlocalip);
 
     void ondisconnectrequest();
     void ondisconnectresponse();
@@ -71,7 +73,9 @@ public:
     void udpSocketCheck();
 
     void onConfigTimerOut();
-    void tunnelRequest(QString Gaddress,QString data);
+    void tunnelRequest_KNXWrite(QString Gaddress,QString data);
+    void tunnelRequest_KNXRead(QString Gaddress);
+    void tunnelRequest_KNXRead_tpdu(QString Gaddress);
 
     void tunnelAcknowlage(quint8 sequence);
     void clearMessage();//重置一些通信的标志，用于重新连接之后使用
@@ -84,9 +88,13 @@ signals:
     void sigstate(Appstate);
     void sigValueSendState(ValueSendState);
 
+    void sigKNXBusMessageReceived(KnxBusRecord record);
+
 public slots:
        void m_cleanup();
 private:
+    PendingAckManager *m_ackManager;
+
     Appstate m_state = Appstate::Idle;
     ValueSendState VSstate = ValueSendState::None;
 
@@ -95,6 +103,8 @@ private:
 
     QList <QHostAddress> serversIPlist;//用来管理发现的设备们的ip
     QList <quint16> serversportlist;
+    QList <DeviceInfo> serversinfo;//用来管理发现的设备们的信息
+
 
     QUdpSocket m_udpSocket; //管理的套接字
     QUdpSocket udpSocket;  //通信的套接字
@@ -102,7 +112,7 @@ private:
     bool connectFlag = false;//标识当前的连接状态
     bool m_cleanup_flag = false;//标识当前清理状态
 
-    QTimer * timerStatus;
+    QTimer * timerStatus = nullptr;
 
     quint8 times_formconnect; //管理连接的问询次数。
     QString localip;
@@ -110,7 +120,6 @@ private:
 
     QString detailDeviceInfo;
 
-    QList <DeviceInfo> serversinfo;//用来管理发现的设备们的信息
 
     quint8 m_channelID = 0;//用来管理通信的通道iD。
     quint8 m_area = 0;//用来管理三级地址的一级
@@ -119,8 +128,8 @@ private:
 
 
     // ondescriptiontimeout
-    quint8 SequenceNumber = 0;//标识报文序列号  未使用
-    quint8 sequencenumber=0;//标识报文序列号  通信报文使用
+    quint8 server_sequence = 0;//标识报文序列号  接收客户端报文使用
+    quint8 m_sequencenumber=0;//标识报文序列号  本地发送通信报文使用
     quint8 timetolive = 0;
 
     qint16 configTimeout = 3000;

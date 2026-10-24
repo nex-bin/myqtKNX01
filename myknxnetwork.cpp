@@ -6,9 +6,22 @@ myKNXnetwork::myKNXnetwork(QObject * parent)
     ,m_udpSocket(new QUdpSocket(this))
     ,udpSocket(new QUdpSocket(this))
 {
+
+    m_ackManager = new PendingAckManager(this);
+    timerStatus_init();
     connect(&m_udpSocket,&QUdpSocket::readyRead,this,&myKNXnetwork::listenKNXManageMessage);
     connect(&udpSocket,&QUdpSocket::readyRead,this,&myKNXnetwork::listenKNXMessage);
 
+}
+myKNXnetwork::~myKNXnetwork(){
+    if (timerStatus) {
+        timerStatus->stop();
+        delete timerStatus; // 或者依赖父对象销毁
+        timerStatus = nullptr;
+    }
+    if (m_udpSocket.isOpen()) {
+        m_udpSocket.close();
+    }
 }
 bool myKNXnetwork::init(){
     m_cleanup_flag = false;
@@ -41,14 +54,16 @@ void myKNXnetwork::cleanup(){
         qDebug()<<"m_udpSocket is closing.......";
         m_udpSocket.close();
     }
-    if (!timerStatus) {
-        return;
-    }
 
-    if(timerStatus->isActive()){
-        qDebug()<<"timerstatus is stoping.......";
-        timerStatus->stop();
-    }
+    // 1023测试，不操作定时器
+    // if (!timerStatus) {
+    //     return;
+    // }
+
+    // if(timerStatus && timerStatus->isActive()){
+    //     qDebug()<<"timerstatus is stoping.......";
+    //     timerStatus->stop();
+    // }
     setState(Appstate::Idle);
     qDebug() << "网络资源清理完成";
 
@@ -56,7 +71,8 @@ void myKNXnetwork::cleanup(){
 }
 
 void myKNXnetwork::clearMessage(){
-    sequencenumber = 0;
+    m_sequencenumber = 0;
+    server_sequence = 0;
     connectFlag = false;
 
     m_channelID = 0;//用来管理通信的通道iD。
@@ -64,7 +80,7 @@ void myKNXnetwork::clearMessage(){
     m_line = 0;//用来管理三级地址的二级
     m_seqaddressnumber = 0;//用来管理三级地址的三级
 
-    if(timerStatus->isActive()){
+    if(timerStatus && timerStatus->isActive()){
         qDebug()<<"timerstatus is stoping.......";
         timerStatus->stop();
     }
@@ -85,11 +101,12 @@ void myKNXnetwork::udpSocketCheck(){
 
 void myKNXnetwork::onNetworkInfo(){
     //发现本地网卡和IP地址
-    qDebug()<<"***************this is the function myKNXnetwork::onNetworkInfo";
+    qDebug()<<"[myKNXnetwork::onNetworkInfo] 正在获取本地IP。。。。。";
     QList <QNetworkInterface> ifaces = QNetworkInterface::allInterfaces();
     QList <QHostAddress> addresses;
 
     qDebug()<<"本地端口IP地址为：";
+    addresses.clear();
     for(const QNetworkInterface iface : ifaces){
         for(const auto ifaceEntry : iface.addressEntries()){
             if(ifaceEntry.ip().protocol() == QAbstractSocket::IPv4Protocol && !ifaceEntry.ip().isLoopback() && !ifaceEntry.ip().isLinkLocal()){
@@ -98,7 +115,7 @@ void myKNXnetwork::onNetworkInfo(){
             }
         }
     }
-    qDebug()<<"addresses changdu"<<addresses.size();
+    qDebug()<<QString("一共获取到%1个本地IP。退出。。").arg(addresses.size());
     emit sigLocalIpaddress(addresses);
 }
 void myKNXnetwork::onflushIpport(){
@@ -106,9 +123,15 @@ void myKNXnetwork::onflushIpport(){
 }
 
 void myKNXnetwork::onsearchrequest(QString ip){
-    qDebug()<<"***************this is the function myKNXnetwork::onsearchrequest";
+    qDebug()<<"【myKNXnetwork::onsearchrequest】 正在发送searchrequest......";
     QHostAddress ha = QHostAddress(ip);
-    qDebug()<<"使用的本地IP为："<<ip;
+    qDebug()<<"本次发送请求使用的本地IP为："<<ip;
+
+
+    serversinfo.clear();
+    serversIPlist.clear();
+    serversportlist.clear();
+
 
     if(ha.isNull()){
         qDebug()<<"输入参数 地址无效；"<<ip;
@@ -124,7 +147,7 @@ void myKNXnetwork::onsearchrequest(QString ip){
 
 
     if(!m_udpSocket.isValid() || m_udpSocket.state() != QAbstractSocket::BoundState){
-        qWarning() << "套接字未绑定";
+        qWarning() << "m_udpSocket套接字未绑定,正在重新绑定端口";
         bool flag_myudpbind = m_udpSocket.bind(ha,0,QUdpSocket::ShareAddress | QUdpSocket::ReuseAddressHint);
         if(!flag_myudpbind) {
             qDebug()<<"m_udpsocket 套接字绑定端口失败";
@@ -178,6 +201,8 @@ void myKNXnetwork::onsearchrequest(QString ip){
     if(!flag_search_req){
         qDebug()<<"flag_search_req 0";
     }
+
+
     const auto proxy = QKnxNetIpSearchRequestProxy::Builder()
                         .setDiscoveryEndpoint(hpai)
                            .create();
@@ -189,12 +214,12 @@ void myKNXnetwork::onsearchrequest(QString ip){
     search_timer->setSingleShot(true);
     connect(search_timer,&QTimer::timeout,this,&myKNXnetwork::searchrequest_ontime);
 
-    qDebug()<<"searching  开始定时器 ----- 3000ms";
+    qDebug()<<"searching  开始计时 ----- 3000ms";
     search_timer->start(configTimeout);
 
 }
 void myKNXnetwork::searchrequest_ontime(){
-    qDebug()<<"search  定时器结束";
+    qDebug()<<"search  计时结束";
     setState(Appstate::Idle);
     emit sigfindedDeviceInfo(serversinfo);
 }
@@ -204,27 +229,31 @@ void myKNXnetwork::onsearchrequestextend(QString ip){
     QHostAddress hpai = QHostAddress(ip);
 
 }
-void myKNXnetwork::ondescriptionrequest(ips ipandlocalip){
-    qDebug()<<"***************this is the function myKNXnetwork::ondescriptionrequest";
 
+void myKNXnetwork::ondescriptionrequest(QList<QString> ipandlocalip){
+    qDebug()<<"【myKNXnetwork::ondescriptionrequest】 正在发送描述请求。";
 
-    qDebug()<<"本地IP为："<<ipandlocalip.iplocal;
-    qDebug()<<"对方IP为："<<ipandlocalip.ip;
+    localip = ipandlocalip.at(0);
+    serverip = ipandlocalip.at(1);
 
-    QHostAddress ip = QHostAddress(ipandlocalip.ip);
-    QHostAddress ipLocal = QHostAddress(ipandlocalip.iplocal);
+    qDebug()<<"本地IP为："<<localip;
+    qDebug()<<"对方IP为："<<serverip;
 
-    localip = ipandlocalip.iplocal;
-    serverip = ipandlocalip.ip;
+    if(ipandlocalip.size()!=2)return;
+
+    const auto ha_local = QHostAddress(ipandlocalip.at(0));
+    const auto hp_server = QHostAddress(ipandlocalip.at(1));
 
     m_udpSocket.close();
     if(!m_udpSocket.isValid() || m_udpSocket.state() != QAbstractSocket::BoundState )
     {
-        qWarning()<<"udpSocket 未绑定端口";
-        bool flag_bind = m_udpSocket.bind(ipLocal,0);
+        qWarning()<<"m_udpSocket 未绑定端口，正在重新绑定。 错误标号：error0 ";
+        bool flag_bind = m_udpSocket.bind(ha_local,0);
         if(!flag_bind){
-            qWarning()<<"fla_bind,端口绑定失败";
+            qWarning()<<"m_udpSocket 端口绑定失败。 错误标号：error1 ";
             return;
+        }else{
+            qDebug()<<"m_udpSocket,端口绑定成功"<<QString::number(m_udpSocket.localPort());
         }
 
     }
@@ -244,7 +273,7 @@ void myKNXnetwork::ondescriptionrequest(ips ipandlocalip){
     }
     setState(Appstate::Descripting);
 
-    bool flag_descript = m_udpSocket.writeDatagram(proxy.bytes().toByteArray(),ip,3671);
+    bool flag_descript = m_udpSocket.writeDatagram(proxy.bytes().toByteArray(),hp_server,3671);
     if(!flag_descript){
         qDebug()<<"flag_descript 0";
     }
@@ -265,34 +294,37 @@ void myKNXnetwork::description_ontime(){
     emit sigDetailInfo(detailDeviceInfo);
     detailDeviceInfo.clear();
 }
-void myKNXnetwork::onconnectrequest(ips ipandlocalip){
-    qDebug()<<"***************this is the function myKNXnetwork::onconnectrequest";
+void myKNXnetwork::onconnectrequest(QList<QString> ipandlocalip){
+    qDebug()<<"【myKNXnetwork::onconnectrequest】 正在发送连接请求。";
 
     times_formconnect = 4;
 
-    const auto ha = QHostAddress(ipandlocalip.ip);
-    const auto hpai = QHostAddress(ipandlocalip.iplocal);
-    qDebug()<<"local ip is "<<hpai;
-    qDebug()<<"target ip is "<<ha;
+    if(ipandlocalip.size()!=2)return;
+
+    const auto ha_local = QHostAddress(ipandlocalip.at(0));
+    const auto hpai_server = QHostAddress(ipandlocalip.at(1));
+    qDebug()<<"local ip is ： "<<ha_local;
+    qDebug()<<"target ip is : "<<hpai_server;
 
     m_udpSocket.close();
     udpSocket.close();
 
     if(!udpSocket.isValid() || udpSocket.state() != QAbstractSocket::BoundState){
-        qWarning()<<"fla_bind0,端口绑定失败";
-        bool flag_bind0 = udpSocket.bind(hpai,0);
+        qWarning()<<"udpSocket 端口绑定失败 正在重新绑定端口，错误标号：error2";
+        bool flag_bind0 = udpSocket.bind(ha_local,0);
         if(flag_bind0){
-            qDebug()<<"udpSocket fla_bind0,端口绑定成功"<<udpSocket.localPort();
+            qDebug()<<"udpSocket 端口绑定成功"<<udpSocket.localPort();
         }else{
+            qWarning()<<"udpSocket 端口绑定失败 错误标号：error3";
             return;
         }
     }
     if(!m_udpSocket.isValid() || m_udpSocket.state() != QAbstractSocket::BoundState )
     {
-        qWarning()<<"udpSocket 未绑定端口";
-        bool flag_bind = m_udpSocket.bind(hpai,0);
+        qWarning()<<"m_udpSocket 未绑定端口,正在重新绑定，错误标号：error4";
+        bool flag_bind = m_udpSocket.bind(ha_local,0);
         if(!flag_bind){
-            qWarning()<<"fla_bind,端口绑定失败";
+            qWarning()<<"m_udpSocket 端口绑定失败 错误标号：error5";
             return;
         }
 
@@ -323,11 +355,11 @@ void myKNXnetwork::onconnectrequest(ips ipandlocalip){
                             .setRequestInformation(connectInfor)
                            .create();
 
-    qDebug()<<"connect request byte is :"<<proxy.bytes().toByteArray().toHex();
+    qDebug()<<"connect request frame is :"<<proxy.bytes().toByteArray().toHex();
     setState(Appstate::Connecting);
 
 
-    bool flag_connreq = m_udpSocket.writeDatagram(proxy.bytes().toByteArray(),ha,3671);
+    bool flag_connreq = m_udpSocket.writeDatagram(proxy.bytes().toByteArray(),hpai_server,3671);
     if(!flag_connreq){
         qDebug()<<"flag_connreq 0";
     }
@@ -337,6 +369,7 @@ void myKNXnetwork::onconnectrequest(ips ipandlocalip){
     connect(connectRequest_timer,&QTimer::timeout,this,&myKNXnetwork::connectrequest_ontime);
     connectRequest_timer->start(configTimeout);
 
+    clearMessage();
 
 }
 void myKNXnetwork::connectrequest_ontime(){
@@ -345,14 +378,19 @@ void myKNXnetwork::connectrequest_ontime(){
     QString individua = QString::number((int)m_area)+"." + QString::number((int)m_line)+"." + QString::number((int)m_seqaddressnumber);
 
     emit sigconnectInfo(individua,m_channelID);
-    // mconnectstatus_init();
-    timerStatus_init();
-    onconnectStatusReq(m_channelID);
+
+    timerStatus->setInterval(50*1000);
+    timerStatus->start();
+    if(timerStatus && timerStatus->isActive()){
+        qDebug()<<"连接状态心跳计时开始";
+        qDebug()<<timerStatus->interval();
+    }
+
 
 }
 
 void myKNXnetwork::onconnectStatusReq(quint8 channelID){
-    qDebug()<<"***************this is the function myKNXnetwork::onconnectStatusReq";
+    qDebug()<<"【myKNXnetwork::onconnectStatusReq】 正在查询连接状态。";
 
 
     const auto hpai = QKnxNetIpHpaiProxy::Builder()
@@ -375,9 +413,6 @@ void myKNXnetwork::timerStatus_init(){
     //连接状态问询函数。心跳 TTL timetolive
     timerStatus = new QTimer(this);
     connect(timerStatus,&QTimer::timeout,this,&myKNXnetwork::onconnectStatus_asktime);
-    timerStatus->setInterval(50*1000);
-    timerStatus->start();
-    qDebug()<<"连接心跳计时开始";
 
 }
 void myKNXnetwork::mconnectstatus_init(){
@@ -390,7 +425,7 @@ void myKNXnetwork::mconnectstatus_init(){
 }
 
 // void myKNXnetwork::onconnectStatus_asktime(){
-
+// 断线自动重连机制
 //     times_formconnect = times_formconnect -1 ;
 //     if(times_formconnect <= 0){
 //         //表示问询次数用完，这个时候判断问询响应是否都是成功的。
@@ -408,7 +443,7 @@ void myKNXnetwork::onconnectStatus_asktime(){
 }
 
 void myKNXnetwork::ondisconnectrequest(){
-    qDebug()<<"this is the function for sending disconnect request";
+    qDebug()<<"【myKNXnetwork::ondisconnectrequest】 正在断开连接。";
     const auto contendpoint = QKnxNetIpHpaiProxy::Builder()
                                 .setHostAddress(QHostAddress(localip))
                                 .setHostProtocol(QKnxNetIp::HostProtocol::UDP_IPv4)
@@ -429,10 +464,11 @@ void myKNXnetwork::ondisconnectrequest(){
         return;
     }
     clearMessage();
+    m_ackManager->clearAll();
     setState(Appstate::Idle);
 }
 void myKNXnetwork::ondisconnectresponse(){
-    qDebug()<<"myKNXnetwork::ondisconnectresponse";
+    qDebug()<<"【myKNXnetwork::ondisconnectresponse】 发送断开连接响应。";
     m_udpSocketCheck();
 
     const auto proxy = QKnxNetIpDisconnectResponseProxy::Builder()
@@ -444,6 +480,8 @@ void myKNXnetwork::ondisconnectresponse(){
         qDebug()<<"flag_res_discon 0";
     }
     clearMessage();
+    m_ackManager->clearAll();
+
 }
 void myKNXnetwork::connectSuccess(){
     setState(Appstate::Connected);
@@ -552,8 +590,8 @@ void myKNXnetwork::listenKNXManageMessage(){
                     QString ab = "IP地址：" + pro.hostAddress().toString()+" : "+QString::number(pro.port())+"\n"+ "编程模式：" + deviceStatus_text+"\n"+"物理地址："+dib1proxy.individualAddress().toString()+
                                  "\n"+"设备名称："+dib1proxy.deviceName()+"\n"+"mac地址："+dib1proxy.macAddress().toHex().toByteArray()+
                                  "\n"+"设备硬件编码："+dib1proxy.serialNumber().toHex().toByteArray();
-                    qDebug()<<"dib1proxy.descriptionType"<<dib1proxy.descriptionType();
-                    qDebug()<<"dib2proxy.descriptionType"<<dib2proxy.descriptionType();
+                    // qDebug()<<"dib1proxy.descriptionType"<<dib1proxy.descriptionType();
+                    // qDebug()<<"dib2proxy.descriptionType"<<dib2proxy.descriptionType();
 
                     qDebug()<<ab;
 
@@ -566,11 +604,7 @@ void myKNXnetwork::listenKNXManageMessage(){
                         serversIPlist.append(pro.hostAddress());
                         serversinfo.append(deviceinfo);
                     }
-
-
                 }
-
-
                 break;
 
             }
@@ -596,6 +630,17 @@ void myKNXnetwork::listenKNXManageMessage(){
                     qDebug()<<"m_channelID is: "<<m_channelID;
                     qDebug()<<"连接是否成功 :"<<frame.status();
 
+                    // 离开发出连接状态问询
+                    onconnectStatusReq(m_channelID);
+
+                    // if(static_cast <int> (frame.status()) == 0){
+                    //     connectSuccess();
+                    //     qDebug()<<"连接状态：成功";
+                    // }else{
+                    //     connectFailure();
+                    //     qDebug()<<"连接状态：失败";
+
+                    // }
                 }
 
                 break;
@@ -607,7 +652,10 @@ void myKNXnetwork::listenKNXManageMessage(){
                 const auto ha = frame.controlEndpoint();
                 const auto h = QKnxNetIpHpaiProxy(ha);
                 qDebug()<<h.hostAddress();
+                setState(Appstate::Idle);
                 ondisconnectresponse();
+
+                m_sequencenumber = 0;
                 break;
             }
             case QKnxNetIp::ServiceType::DisconnectResponse:{
@@ -616,6 +664,7 @@ void myKNXnetwork::listenKNXManageMessage(){
                 const auto frame = QKnxNetIpDisconnectResponseProxy(b_frame);
                 qDebug()<<"disconnect channelid"<<frame.channelId();
                 qDebug()<<"disconnect status"<<frame.status();
+                setState(Appstate::Idle);
                 break;
             }
             case QKnxNetIp::ServiceType::ConnectionStateRequest:{
@@ -646,12 +695,8 @@ void myKNXnetwork::listenKNXManageMessage(){
             case QKnxNetIp::ServiceType::DescriptionResponse:{
                 qDebug()<<" listen DescriptionResponse******";
 
-
-                qDebug()<<static_cast<int> (m_state);
                 if(m_state == Appstate::Descripting){
                     const auto frame = QKnxNetIpDescriptionResponseProxy(b_frame);
-
-
                     const auto device = frame.deviceHardware();
                     const auto deviceproxy = QKnxNetIpDeviceDibProxy(device);
 
@@ -660,12 +705,12 @@ void myKNXnetwork::listenKNXManageMessage(){
                         return;
                     }
 
-                    deviceproxy.descriptionType();
-                    deviceproxy.mediumStatus();
-                    deviceproxy.macAddress();
-                    deviceproxy.projectInstallationId();
-                    deviceproxy.serialNumber();
-                    deviceproxy.multicastAddress();
+                    // deviceproxy.descriptionType();
+                    // deviceproxy.mediumStatus();
+                    // deviceproxy.macAddress();
+                    // deviceproxy.projectInstallationId();
+                    // deviceproxy.serialNumber();
+                    // deviceproxy.multicastAddress();
                     QString name = "设备名称："+deviceproxy.deviceName()+"    ";
                     QString mode;
                     if(static_cast <int>(deviceproxy.deviceStatus())){
@@ -676,37 +721,37 @@ void myKNXnetwork::listenKNXManageMessage(){
                     QString type;
                     switch(deviceproxy.mediumStatus()){
                     case QKnxNetIp::MediumStatus::TP:{
-                        qDebug()<<static_cast <int>(QKnxNetIp::MediumStatus::TP)<<"tp";
+                        // qDebug()<<static_cast <int>(QKnxNetIp::MediumStatus::TP)<<"tp";
                         type = "连接类型：TP线   ";
                         break;
                     }
                     case QKnxNetIp::MediumStatus::TP0:{
-                        qDebug()<<static_cast <int>(QKnxNetIp::MediumStatus::TP0)<<"TP0";
+                        // qDebug()<<static_cast <int>(QKnxNetIp::MediumStatus::TP0)<<"TP0";
                         type = "连接类型：TP线    ";
                         break;
                     }
                     case QKnxNetIp::MediumStatus::RF:{
-                        qDebug()<<static_cast <int>(QKnxNetIp::MediumStatus::RF)<<"RF";
+                        // qDebug()<<static_cast <int>(QKnxNetIp::MediumStatus::RF)<<"RF";
                         type = "连接类型：RF    ";
                         break;
                     }
                     case QKnxNetIp::MediumStatus::PL132:{
-                        qDebug()<<static_cast <int>(QKnxNetIp::MediumStatus::PL132)<<"PL132";
+                        // qDebug()<<static_cast <int>(QKnxNetIp::MediumStatus::PL132)<<"PL132";
                         type = "连接类型：132电力线    ";
                         break;
                     }
                     case QKnxNetIp::MediumStatus::PL:{
-                        qDebug()<<static_cast <int>(QKnxNetIp::MediumStatus::PL)<<"PL";
+                        // qDebug()<<static_cast <int>(QKnxNetIp::MediumStatus::PL)<<"PL";
                         type = "连接类型：110电力线    ";
                         break;
                     }
                     case QKnxNetIp::MediumStatus::NetIP:{
-                        qDebug()<<static_cast <int>(QKnxNetIp::MediumStatus::NetIP)<<"NetIP";
+                        // qDebug()<<static_cast <int>(QKnxNetIp::MediumStatus::NetIP)<<"NetIP";
                         type = "连接类型：网线    ";
                         break;
                     }
                     case QKnxNetIp::MediumStatus::Unknown:{
-                        qDebug()<<static_cast <int>(QKnxNetIp::MediumStatus::Unknown)<<"Unknown";
+                        // qDebug()<<static_cast <int>(QKnxNetIp::MediumStatus::Unknown)<<"Unknown";
                         type = "连接类型：未知的类型    ";
                         break;
                     }
@@ -717,14 +762,14 @@ void myKNXnetwork::listenKNXManageMessage(){
 
                     QString mac;
                     qDebug()<<"mac地址:"<<deviceproxy.macAddress().toHex();
-                    mac = "mac地址:"+deviceproxy.macAddress().toByteArray().toHex()+"    ";
+                    mac = "mac地址:"+deviceproxy.macAddress().toByteArray().toHex().toUpper()+"    ";
                     QString projectId;
                     quint16 id = deviceproxy.projectInstallationId();
                     quint16 install = id & 0x000f;
                     quint16 project = id >> 4;
                     projectId = "绑定项目ID:"+QString("%1:%2").arg(project).arg(install)+"    ";
                     QString serial;
-                    qDebug()<<"设备序列号: "<<deviceproxy.serialNumber();
+                    qDebug()<<"设备序列号: "<<deviceproxy.serialNumber().toHex();
                     serial = "设备序列号:"+deviceproxy.serialNumber().toByteArray().toHex()+"    ";
                     QString multicast;
                     multicast = "多播地址："+static_cast<QString>(deviceproxy.multicastAddress().toString())+"    ";
@@ -790,14 +835,14 @@ void myKNXnetwork::listenKNXManageMessage(){
                         if(!optionaldibs.isEmpty()){
                             qDebug()<<"optionaldibs is not empty";
                             for(const auto &optionaldib:optionaldibs){
-                                qDebug()<<optionaldib.bytes().size();
+                                // qDebug()<<optionaldib.bytes().size();
                                 const auto dibproxy = QKnxNetIpDib(optionaldib);
                                 if(dibproxy.size()){
-                                    qDebug()<<dibproxy.bytes().toHex();
+                                    // qDebug()<<"附加字段："<<dibproxy.bytes().toHex();
                                     QByteArray data = dibproxy.bytes().toByteArray();   // 先转成 QByteArray
                                     for (int i = 0; i < data.size(); ++i) {
                                         quint8 byte = static_cast<quint8>(data.at(i));
-                                        qDebug() << QString("字节[%1]: 0x%2").arg(i).arg(byte, 2, 16, QChar('0')).toUpper();
+                                        // qDebug() << QString("字节[%1]: 0x%2").arg(i).arg(byte, 2, 16, QChar('0')).toUpper();
                                     }
 
                                     if(dibproxy.bytes().size()>4){
@@ -807,7 +852,7 @@ void myKNXnetwork::listenKNXManageMessage(){
 
                                         detailDeviceInfo = ad+"\n"+supportservers+"\n"+manufactory;
 
-                                        qDebug()<<"dib : "<<dib<<"services "<<services.data();
+                                        // qDebug()<<"dib : "<<dib<<"services "<<services.data();
                                     }
 
                                 }
@@ -833,14 +878,9 @@ void myKNXnetwork::listenKNXManageMessage(){
     }
 }
 
-void myKNXnetwork::tunnelRequest(QString Gaddress,QString data){
+void myKNXnetwork::tunnelRequest_KNXWrite(QString Gaddress,QString data){
     qDebug()<<"myKNXnetwork::tunnelRequest";
-    // qDebug()<<"Socket :udpSocket"<<"隧道连接发送 2/0/0 发 00 01";
     qDebug()<<Gaddress<<"send value"<<data;
-
-    // const auto m_data = "00 01";
-    // QKnxByteArray messagedata = QKnxByteArray::fromHex(data);
-
     QByteArray m_data = QByteArray::fromHex(data.toLatin1());
     QKnxByteArray messagedata = QKnxByteArray::fromByteArray(m_data);
 
@@ -865,19 +905,78 @@ void myKNXnetwork::tunnelRequest(QString Gaddress,QString data){
                                        .createFrame();
 
     const auto frame = QKnxNetIpTunnelingRequestProxy::Builder()
-                        .setSequenceNumber(sequencenumber)
+                        .setSequenceNumber(m_sequencenumber)
                         .setCemi(cemi)
                         .setChannelId(m_channelID)
                            .create();
-    sequencenumber = sequencenumber + 1;
     bool flag_write = udpSocket.writeDatagram(frame.bytes().toByteArray(),QHostAddress(serverip),3671);
     if(!flag_write){
         qWarning()<<"udpSocket 写失败";
     }
-    QTimer * timer_requet_udpSocket = new QTimer(this);
-    timer_requet_udpSocket->setSingleShot(true);
+
+
+    m_ackManager->addPending(m_sequencenumber,frame.bytes().toByteArray());
+    m_sequencenumber =  m_sequencenumber + 1;
+
 
 }
+void myKNXnetwork::tunnelRequest_KNXRead(QString Gaddress){
+    qDebug()<<"myKNXnetwork::tunnelRequest";
+
+    udpSocketCheck();
+
+    QKnxLinkLayerFrame cemi = QKnxLinkLayerFrame::builder()
+                                  .setDestinationAddress({ QKnxAddress::Type::Group, QLatin1String(Gaddress.toLatin1()) }) // 示例组地址
+                                  // .setSourceAddress(QKnxAddress(QKnxAddress::Type::Group,241)) // 设置源地址
+                                  .createFrame();
+
+    const auto frame = QKnxNetIpTunnelingRequestProxy::Builder()
+                           .setSequenceNumber(m_sequencenumber)
+                           .setCemi(cemi)
+                           .setChannelId(m_channelID)
+                           .create();
+    bool flag_write = udpSocket.writeDatagram(frame.bytes().toByteArray(),QHostAddress(serverip),3671);
+
+    m_ackManager->addPending(m_sequencenumber,frame.bytes().toByteArray());
+    m_sequencenumber = m_sequencenumber + 1;
+
+    if(!flag_write){
+        qWarning()<<"udpSocket 写失败";
+    }
+
+}
+void myKNXnetwork::tunnelRequest_KNXRead_tpdu(QString Gaddress){
+    qDebug()<<"myKNXnetwork::tunnelRequest";
+
+    udpSocketCheck();
+    const auto tpci = QKnxTpdu::TransportControlField::DataGroup;
+    const auto apci = QKnxTpdu::ApplicationControlField::GroupValueWrite;
+
+
+    const auto tpdu = QKnxTpdu(tpci,apci,QKnxByteArray(1, 0x00));
+
+    QKnxLinkLayerFrame cemi = QKnxLinkLayerFrame::builder()
+                                  .setDestinationAddress({ QKnxAddress::Type::Group, QLatin1String(Gaddress.toLatin1()) }) // 示例组地址
+                                  // .setSourceAddress(QKnxAddress(QKnxAddress::Type::Group,241)) // 设置源地址
+                                  .setTpdu(tpdu)
+                                  .createFrame();
+
+    const auto frame = QKnxNetIpTunnelingRequestProxy::Builder()
+                           .setSequenceNumber(m_sequencenumber)
+                           .setCemi(cemi)
+                           .setChannelId(m_channelID)
+                           .create();
+    bool flag_write = udpSocket.writeDatagram(frame.bytes().toByteArray(),QHostAddress(serverip),3671);
+
+    m_ackManager->addPending(m_sequencenumber,frame.bytes().toByteArray());
+    m_sequencenumber = m_sequencenumber + 1;
+
+    if(!flag_write){
+        qWarning()<<"udpSocket 写失败";
+    }
+
+}
+
 
 
 void myKNXnetwork::tunnelAcknowlage(quint8 sequence){
@@ -906,35 +1005,118 @@ void myKNXnetwork::listenKNXMessage(){
                 qDebug()<<"TunnelingRequest-0x0420-              ";
 
                 const auto frame = QKnxNetIpTunnelingRequestProxy(frame_b);
-                frame.channelId();
-                frame.sequenceNumber();
+                KnxBusRecord record ;
+
                 const auto cemi = frame.cemi();
-                const auto message = cemi.messageCode();
-                const auto destinationAddre =  cemi.destinationAddress();
+                const auto sourceAddress =cemi.sourceAddress().toString();
+                QKnxAddress source(QKnxAddress::Type::Individual,sourceAddress);
+                const auto destinationAddre =  cemi.destinationAddress().toString();
+                QKnxAddress destion;
+                QKnxLinkLayerFrame cemiFrame = frame.cemi();
+                if(QKnxExtendedControlField(cemiFrame.extendedControlField()).destinationAddressType() == QKnxAddress::Type::Group)
+                {
+                    destion =QKnxAddress(QKnxAddress::Type::Group,destinationAddre);
+                    record.isGroupAddress = true;
+                }else{
+                    destion = QKnxAddress(QKnxAddress::Type::Individual,destinationAddre);
+                    record.isGroupAddress = false;
+                }
+                if(cemiFrame.controlField().frameFormat() == QKnxControlField::FrameFormat::Standard){
+                    record.isStandardFormat = true;
+                }else{
+                    record.isStandardFormat = false;
+                }
+
+                record.timestamp = QDateTime::currentDateTime();
+                record.sourceAddress = source.toString();
+                record.destAddress = destion.toString();
+                record.messageCode;
+                switch(cemi.messageCode()){
+                    case QKnxLinkLayerFrame::MessageCode::DataIndication:{
+                        record.messageCode = "DataIndication";
+                        break;
+                    }
+                    case QKnxLinkLayerFrame::MessageCode::DataRequest :{
+                        record.messageCode = "DataRequest";
+                        break;
+                    }
+                    case QKnxLinkLayerFrame::MessageCode::DataConfirmation  :{
+                        record.messageCode = "DataConfirmation";
+                        break;
+                    }
+                        default:{
+                            record.messageCode = "ManageMessageCode;";
+                            break;
+                        }
+                }
+
+                record.hopCount = QKnxExtendedControlField(cemiFrame.extendedControlField()).hopCount();
+                record.channelID = frame.channelId();
+                record.sequenceNumber = frame.sequenceNumber();
+
+
                 const auto tpdu = cemi.tpdu();
-                qDebug()<<"cemi"<<cemi<<"message"<<message<<"destinationAddre"<<destinationAddre<<"tpdu"<<tpdu;
+                qDebug()<<"tpdu.size"<<QKnxTpdu(tpdu).size()<<tpdu.bytes().toHex()<<tpdu.data().isEmpty();
+
+                switch (tpdu.applicationControlField()) {
+                case QKnxTpdu::ApplicationControlField::GroupValueRead:
+                    record.dataType = "GroupValueRead";
+                    break;
+                case QKnxTpdu::ApplicationControlField::GroupValueResponse:
+                    record.dataType = "GroupValueResponse";
+                    break;
+                case QKnxTpdu::ApplicationControlField::GroupValueWrite:
+                    record.dataType = "GroupValueWrite";
+                    if(QKnxTpdu(tpdu).size() == 2){
+                        //这里粗略把1bit和4bit合并，都是1bit,暂不考虑DPT表的事情。
+
+
+                        record.datalength = KNXDPT::DPT_1bit;
+                    }else if(QKnxTpdu(tpdu).size()==3){
+                            record.datalength = KNXDPT::DPT_1byte;
+                        }else if(QKnxTpdu(tpdu).size()==4){
+                        record.datalength = KNXDPT::DPT_2bytes;
+                    }else if(QKnxTpdu(tpdu).size()==6){
+                            record.datalength = KNXDPT::DPT_4bytes;
+                        }else if(QKnxTpdu(tpdu).size()==10){
+                        record.datalength = KNXDPT::DPT_8bytes;
+                    }else if(QKnxTpdu(tpdu).size()==16){
+                            record.datalength = KNXDPT::DPT_14bytes;
+                        }
+                    break;
+                default:
+                    record.dataType = "GroupValue";
+                    break;
+                }
+                record.dataValue = tpdu.data().toByteArray();
+                record.dataHex = tpdu.data().toByteArray().toHex(' ').toUpper();
+
+                emit sigKNXBusMessageReceived(record);
+                qDebug()<<"cemi"<<cemi<<"tpdu长度"<<tpdu.data().size()<<tpdu.data().toHex();
                 tunnelAcknowlage(frame.sequenceNumber());
-
-
-
                 break;
             }
             case QKnxNetIp::ServiceType::TunnelingAcknowledge:{
                 qDebug()<<"TunnelingAcknowledge-0x0421-              ";
                 const auto frame = QKnxNetIpTunnelingAcknowledgeProxy(frame_b);
-                if( frame.channelId()==m_channelID && frame.sequenceNumber()==sequencenumber - 1){
-                    if(frame.status() == QKnxNetIp::Error::None){
-                        qDebug()<<"send successfully";
-                        emit sigValueSendState(ValueSendState::Success);
+
+                quint8 sequence = frame.sequenceNumber();
+                if( frame.channelId()==m_channelID){
+
+                    if(m_ackManager->contains(sequence)){
+                        if(frame.status() == QKnxNetIp::Error::None){
+                            emit sigValueSendState(ValueSendState::Success);
+                        }
                     }else{
                         qDebug()<<"send default";
                         emit sigValueSendState(ValueSendState::Failure);
                     }
+                    m_ackManager->removePending(sequence);
 
                 }else{
                     qDebug()<<"channelis or sequencenumber is wrong";
                     qDebug()<<"内部channelID"<<m_channelID;
-                    qDebug()<<"内部sequenceNUmber"<<sequencenumber;
+                    qDebug()<<"内部sequenceNUmber"<<m_sequencenumber;
                     qDebug()<<"外部channelID"<<frame.channelId();
                     qDebug()<<"外部sequenceNumber"<<frame.sequenceNumber();
                 }

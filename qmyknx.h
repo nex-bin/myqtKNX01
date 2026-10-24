@@ -3,21 +3,6 @@
 
 
 #ifndef QT_STATIC
-/*
- * 如果定义了QT_BUILD_KNX_LIB，就会通过Q_KNX_EXPORT来说明，Q_DECL_IMPORT来说明函数从外部库导入。
- * 如果没有定义QT_BUILD_KNX_LIB，就会通过Q_KNX_EXPORT来说明，Q_DECL_EXPORT来说明函数从内部库导入。
- */
-
-// #  if defined(QT_BUILD_KNX_LIB)
-// #    define Q_KNX_EXPORT Q_DECL_EXPORT
-// #  else
-// #    define Q_KNX_EXPORT Q_DECL_IMPORT
-// // #    define Q_KNX_EXPORT Q_DECL_EXPORT
-// #  endif
-// #else
-// #  define Q_KNX_EXPORT Q_DECL_EXPORT
-// #endif
-
 
 typedef signed char qint8;         /* 8 bit signed */
 typedef unsigned char quint8;      /* 8 bit unsigned */

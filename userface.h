@@ -46,14 +46,16 @@ private:
     void senddisconnectrequest();
 
     void sendknxvalue();
+    void sendknxvalueread();
 signals:
     void sigLocalIpaddress();
     void sigfleshport();
     void sigsearchrequest(QString localIP);
-    void sigdescriptionrequest(ips);
-    void sigconnectrequest(ips);
+    void sigdescriptionrequest(QList<QString>);
+    void sigconnectrequest(QList<QString>);
     void sigdisconnect();
     void sigsendvalue(QString,QString);
+    void sigsendvalueread(QString);
 };
 
 #endif // USERFACE_H

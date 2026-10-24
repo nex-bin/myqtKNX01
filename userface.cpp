@@ -24,6 +24,7 @@ void userface::init(){
     connect(ui->pushButton_5,&QPushButton::clicked,this,&userface::sendconnectrequest);
     connect(ui->pushButton_4,&QPushButton::clicked,this,&userface::senddisconnectrequest);
     connect(ui->pushButton_6,&QPushButton::clicked,this,&userface::sendknxvalue);
+    connect(ui->pushButton_3,&QPushButton::clicked,this,&userface::sendknxvalueread);
 
     connect(ui->radioButton_2,&QRadioButton::toggled,this,&userface::init_checkbox);
 
@@ -71,15 +72,16 @@ void userface::sendsearchrequest(){
     qDebug()<<"click the search button";
 
     // ui->pushButton_2->setEnabled(false);
+    m_address.clear();
     emit sigsearchrequest(ip);
 }
 void userface::senddescriptionrequest(){
     qDebug()<<"click the description button";
     QString ip = ui->comboBox_3->currentText();
     QString iplocal = ui->comboBox_2->currentText();
-    ips ipandiplocal;
-    ipandiplocal.iplocal = iplocal;
-    ipandiplocal.ip = ip;
+    QList<QString> ipandiplocal;
+    ipandiplocal.append(iplocal);
+    ipandiplocal.append(ip);
 
     emit sigdescriptionrequest(ipandiplocal);
 }
@@ -87,9 +89,9 @@ void userface::sendconnectrequest(){
     qDebug()<<"click the connect button";
     QString ip = ui->comboBox_3->currentText();
     QString iplocal = ui->comboBox_2->currentText();
-    ips ipandiplocal;
-    ipandiplocal.iplocal = iplocal;
-    ipandiplocal.ip = ip;
+    QList<QString> ipandiplocal;
+    ipandiplocal.append(iplocal);
+    ipandiplocal.append(ip);
 
     // ui->pushButton->setEnabled(false);
     // ui->pushButton_2->setEnabled(false);
@@ -119,6 +121,14 @@ void userface::sendknxvalue(){
     init_checkbox();
 
     emit sigsendvalue(address,data);
+}
+void userface::sendknxvalueread(){
+    qDebug()<<"click the sendvalue button";
+    QString address = ui->lineEdit_7->text();
+    if(address.isEmpty()){
+        address = "2/0/0";
+    }
+    emit sigsendvalueread(address);
 }
 void userface::onFindedDeviceInfo(QList <DeviceInfo> deviceinfos){
     for(DeviceInfo deviceinfo : deviceinfos){

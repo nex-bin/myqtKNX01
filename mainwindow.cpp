@@ -61,12 +61,12 @@ MainWindow::MainWindow(QWidget *parent)
 
 MainWindow::~MainWindow()
 {
+
     delete ui;
 }
 
 void MainWindow::init(){
 
-    qDebug()<<"init ";
     mainStackedWidget = new QStackedWidget(this);
     QAction * userfaceAction = ui->actionKNXnetIp;
     QAction * userpageAction = ui->actionUserpage;
@@ -98,17 +98,18 @@ void MainWindow::init(){
     connect(worker,&myKNXnetwork::sigstate,userinterfaceWidget,&userface::onConnectState);
 
     connect(worker,&myKNXnetwork::sigValueSendState,userinterfaceWidget,&userface::onValueSendState);
-    connect(userinterfaceWidget,&userface::sigsendvalue,worker,&myKNXnetwork::tunnelRequest);
 
-    connect(userpageWidget,&userpage::KNXValueSend,worker,&myKNXnetwork::tunnelRequest);
+    connect(userinterfaceWidget,&userface::sigsendvalue,worker,&myKNXnetwork::tunnelRequest_KNXWrite);
+
+    connect(userinterfaceWidget,&userface::sigsendvalueread,worker,&myKNXnetwork::tunnelRequest_KNXRead);
+
+
+    connect(userpageWidget,&userpage::KNXValueSend,worker,&myKNXnetwork::tunnelRequest_KNXWrite);
 
 
     int userfaceIndex = mainStackedWidget->addWidget(userinterfaceWidget);
-    qDebug()<<"userfaceIndex: "<<userfaceIndex;
     int userpageIndex = mainStackedWidget->addWidget(userpageWidget);
-    qDebug()<<"userpageIndex: "<<userpageIndex;
     int usermainpageIndex = mainStackedWidget->addWidget(usermainpageWidget);
-    qDebug()<<"usermainpageIndex: "<<usermainpageIndex;
 
     connect(userfaceAction,&QAction::triggered,this,&MainWindow::toUserfaceWidget);
     connect(userpageAction,&QAction::triggered,this,&MainWindow::toUserMainpageWidget);
